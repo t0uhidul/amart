@@ -1,3 +1,4 @@
+'use client'
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Phone, Search, ShoppingBasket } from "lucide-react";
 import {
@@ -9,8 +10,22 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import GlobalApi from "../_utils/GlobalApi";
+import { useEffect, useState } from "react";
 
 export default function Header() {
+    const [Category, setCategory] = useState([]);
+
+    useEffect(()=>{
+        getCategoryList();
+    },[])
+
+    const getCategoryList =()=>{
+        GlobalApi.getCategory().then(res=>{
+            console.log(res?.data)
+            setCategory(res.data.data)
+        })
+    }
     return (
         <div className="flex p-5 shadow-md justify-between">
             <div className=" flex items-center gap-8">
@@ -23,17 +38,20 @@ export default function Header() {
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <h2 className="flex gap-3 items-center border rounded-full p-2 px-10 bg-green-300 cursor-pointer">
+                        <h2 className="flex gap-3 items-center border rounded-full p-2 px-10 bg-green-300 cursor-pointe">
                             <LayoutGrid className="h-5 w-4" /> Category
                         </h2>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuLabel>All Category</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Profile</DropdownMenuItem>
-                        <DropdownMenuItem>Billing</DropdownMenuItem>
-                        <DropdownMenuItem>Team</DropdownMenuItem>
-                        <DropdownMenuItem>Subscription</DropdownMenuItem>
+                        {Category.map((category, index)=>(
+                            <DropdownMenuItem 
+                                key={index}
+                                className="font-xl font-semibold"
+                            >{category.name}</DropdownMenuItem>
+
+                        ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
 
