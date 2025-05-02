@@ -1,13 +1,8 @@
 "use client";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SliderItem {
   id: number;
@@ -22,39 +17,70 @@ interface SliderProps {
 }
 
 export default function Slider({ sliderList }: SliderProps) {
-  console.log("slide-------", sliderList);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) =>
+        prevIndex === sliderList.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000); // change every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [sliderList.length]);
+
+  const handleDotClick = (index: number) => setCurrentIndex(index);
+
   return (
-    <Carousel>
-      <CarouselContent>
-        {sliderList.map((slider, indx) => {
-          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+    <div className="relative w-screen h-[calc(100vh-100px)] overflow-hidden">
+      <AnimatePresence>
+        {sliderList.map((slider, index) => {
           const imagePath = slider.image?.[0]?.url;
           const imageUrl =
             backendUrl && imagePath ? backendUrl + imagePath : null;
 
-          console.log("Image URL:", imageUrl);
-
           return (
-            <CarouselItem key={indx}>
-              {imageUrl ? (
-                <Image
-                  src={imageUrl}
-                  alt={slider.name}
-                  width={800}
-                  height={400}
-                  className="w-full h-auto object-cover"
-                />
-              ) : (
-                <div className="w-full h-[400px] bg-gray-200 flex items-center justify-center">
-                  <p>No image available</p>
-                </div>
-              )}
-            </CarouselItem>
+            index === currentIndex && (
+              <motion.div
+                key={slider.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
+                className="absolute inset-0 w-full h-full"
+              >
+                {imageUrl ? (
+                  <Image
+                    src={imageUrl}
+                    alt={slider.name}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <p>No image available</p>
+                  </div>
+                )}
+              </motion.div>
+            )
           );
         })}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
+      </AnimatePresence>
+
+      {/* Dots */}
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
+        {sliderList.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => handleDotClick(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              index === currentIndex ? "bg-primary" : "bg-gray-400"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

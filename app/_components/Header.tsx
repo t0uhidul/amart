@@ -27,13 +27,13 @@ export default function Header() {
     });
   };
   return (
-    <div className="flex p-5 shadow-md justify-between">
+    <div className="flex p-5 shadow-md justify-between bg-[#ebebeb] border-b-1 border-gray-300">
       <div className=" flex items-center gap-8">
         <Image src="/freshgo-logo.png" alt="amart" width={150} height={100} />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <h2 className="flex gap-3 items-center border rounded-full p-2 px-10 bg-green-300 cursor-pointe">
+            <h2 className="flex gap-3 items-center border rounded-full p-2 px-10 bg-primary cursor-pointe text-white font-semibold">
               <LayoutGrid className="h-5 w-4" /> Category
             </h2>
           </DropdownMenuTrigger>
@@ -48,9 +48,9 @@ export default function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="md:flex border rounded-full p-2 gap-3 items-center mx-5 hidden">
+        <div className="md:flex border-1  border-primary rounded-full p-2 gap-3 items-center mx-5 hidden">
           <Search />
-          <input type="text" placeholder="Search" className="outline-none" />
+          <input type="text" placeholder="Search" className="outline-none " />
         </div>
       </div>
       <div className="flex gap-5 items-center">
