@@ -1,12 +1,16 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-    baseURL: 'http://localhost:1337/api'
-})
+  baseURL: "http://127.0.0.1:1337/api",
+});
 
+const getCategory = () => axiosClient.get("/categories");
+const getSliders = () =>
+  axiosClient.get("/sliders?populate=*").then((resp) => {
+    return resp.data.data;
+  });
 
-const getCategory =()=>axiosClient.get('/categories');
-
-export default{
-    getCategory
-}
+export default {
+  getCategory,
+  getSliders,
+};
