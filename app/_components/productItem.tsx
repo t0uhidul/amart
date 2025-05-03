@@ -1,11 +1,41 @@
 import Image from "next/image";
 
-export default function ProductItem({ product }) {
-  const imgUrl =
-    process.env.NEXT_PUBLIC_BACKEND_BASE_URL + product.image?.[0]?.url;
+interface ProductImage {
+  url: string;
+}
+
+interface Category {
+  name: string;
+}
+
+interface Product {
+  name: string;
+  description: string;
+  mrp: string;
+  sellingPice: string;
+  ItemQuantityType: string;
+  image?: ProductImage[];
+  categories?: Category[];
+}
+
+interface ProductItemProps {
+  product: Product;
+}
+
+export default function ProductItem({ product }: ProductItemProps) {
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+
+  if (!baseUrl) {
+    throw new Error(
+      "Environment variable NEXT_PUBLIC_BACKEND_BASE_URL is not defined"
+    );
+  }
+  const imgUrl = product.image?.[0]?.url
+    ? baseUrl + product.image[0].url
+    : "/fallback.png";
 
   return (
-    <div className="border rounded p-4 max-w-xs">
+    <div className="border rounded-6xl border-primary  p-4 max-w-xs">
       <Image
         src={imgUrl}
         alt={product.name}
