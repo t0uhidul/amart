@@ -10,7 +10,13 @@ const getSliders = () =>
     return resp.data.data;
   });
 
+const getProducts = () =>
+  axiosClient.get("/products?populate=*").then((res) => {
+    return res.data.data;
+  });
+
 export default {
   getCategory,
   getSliders,
+  getProducts,
 };
