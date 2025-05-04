@@ -20,7 +20,7 @@ export default function Products({ productList }: ProductsProps) {
       <h1 className="flex justify-center text-6xl font-extrabold mb-4 text-primary">
         All Groceries
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {productList.map((product, indx) => (
           <ProductItem key={indx} product={product} />
         ))}

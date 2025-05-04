@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { ShoppingBagIcon } from "lucide-react";
 import Image from "next/image";
 
 interface ProductImage {
@@ -35,7 +37,7 @@ export default function ProductItem({ product }: ProductItemProps) {
     : "/fallback.png";
 
   return (
-    <div className="border rounded-6xl border-primary  p-4 max-w-xs">
+    <div className="flex flex-col border rounded-4xl border-primary  p-4 max-w-xs justify-center items-center gap-2">
       <Image
         src={imgUrl}
         alt={product.name}
@@ -47,16 +49,21 @@ export default function ProductItem({ product }: ProductItemProps) {
       <p className="text-sm text-gray-500">{product.description}</p>
       <p className="mt-1">
         <span className="line-through text-red-400 mr-2">৳{product.mrp}</span>
-        <span className="text-green-600 font-semibold">
-          ৳{product.sellingPice}
-        </span>
+        <p className="mt-1 text-lg font-semibold text-green-600">
+          ৳{product.sellingPice}{" "}
+          <span className="text-sm font-bold text-gray-600">/Kg</span>
+        </p>
       </p>
-      <p className="text-sm text-gray-600 mt-1">
+      {/* <p className="text-sm text-gray-600 mt-1">
         পরিমাণ: {product.ItemQuantityType}
-      </p>
-      <p className="text-sm text-blue-600 mt-1">
+      </p> */}
+      {/* <p className="text-sm text-blue-600 mt-1">
         ক্যাটেগরি: {product.categories?.[0]?.name}
-      </p>
+      </p> */}
+      <Button className="flex items-center gap-2">
+        <ShoppingBagIcon size={18} />
+        ADD TO BAG
+      </Button>
     </div>
   );
 }
