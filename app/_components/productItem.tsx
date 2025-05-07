@@ -37,13 +37,13 @@ export default function ProductItem({ product }: ProductItemProps) {
     : "/fallback.png";
 
   return (
-    <div className="flex flex-col border rounded-4xl border-primary  p-4 max-w-xs justify-center items-center gap-2">
+    <div className="flex flex-col border rounded-4xl  pb-4 max-w-xs justify-center items-center gap-2 hover:scale-105 transition-all hover:shadow-xl">
       <Image
         src={imgUrl}
         alt={product.name}
-        width={200}
-        height={200}
-        className="rounded"
+        width={400}
+        height={250}
+        className="rounded object-cover"
       />
       <h2 className="mt-2 text-lg font-bold">{product.name}</h2>
       <p className="text-sm text-gray-500">{product.description}</p>
