@@ -25,10 +25,18 @@ const getProductByCategory = (category: string) =>
     .get(`/products?filters[categories][name][$in]=${category}&populate=*`)
     .then((res) => res.data.data);
 
+const addToCart = (data, jwt) =>
+  axiosClient.post("/users-cart", data, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+
 export default {
   getCategory,
   getSliders,
   getProducts,
   getCategoryList,
   getProductByCategory,
+  addToCart,
 };

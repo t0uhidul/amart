@@ -1,82 +1,13 @@
-// import { Button } from "@/components/ui/button";
-// import { ShoppingBagIcon } from "lucide-react";
-// import Image from "next/image";
-
-// interface ProductImage {
-//   url: string;
-// }
-
-// interface Category {
-//   name: string;
-// }
-
-// interface Product {
-//   name: string;
-//   description: string;
-//   mrp: string;
-//   sellingPice: string;
-//   ItemQuantityType: string;
-//   image?: ProductImage[];
-//   categories?: Category[];
-// }
-
-// interface ProductItemProps {
-//   product: Product;
-// }
-
-// export default function ProductItem({ product }: ProductItemProps) {
-//   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
-
-//   if (!baseUrl) {
-//     throw new Error(
-//       "Environment variable NEXT_PUBLIC_BACKEND_BASE_URL is not defined"
-//     );
-//   }
-//   const imgUrl = product.image?.[0]?.url
-//     ? baseUrl + product.image[0].url
-//     : "/fallback.png";
-
-//   return (
-//     <div className="flex flex-col border rounded-4xl  pb-4 max-w-xs justify-center items-center gap-2 hover:scale-105 transition-all hover:shadow-xl">
-//       <Image
-//         src={imgUrl}
-//         alt={product.name}
-//         width={400}
-//         height={250}
-//         className="rounded object-cover"
-//       />
-//       <h2 className="mt-2 text-lg font-bold">{product.name}</h2>
-//       <p className="text-sm text-gray-500">{product.description}</p>
-//       <p className="mt-1">
-//         <span className="line-through text-red-400 mr-2">৳{product.mrp}</span>
-//         <p className="mt-1 text-lg font-semibold text-green-600">
-//           ৳{product.sellingPice}{" "}
-//           <span className="text-sm font-bold text-gray-600">/Kg</span>
-//         </p>
-//       </p>
-//       {/* <p className="text-sm text-gray-600 mt-1">
-//         পরিমাণ: {product.ItemQuantityType}
-//       </p> */}
-//       {/* <p className="text-sm text-blue-600 mt-1">
-//         ক্যাটেগরি: {product.categories?.[0]?.name}
-//       </p> */}
-//       <Button className="flex items-center gap-2">
-//         <ShoppingBagIcon size={18} />
-//         ADD TO BAG
-//       </Button>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import type React from "react";
-
 import { Button } from "@/components/ui/button";
 import { ShoppingBagIcon, Eye, Star } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
+import GlobalApi from "../_utils/GlobalApi";
+import { toast } from "sonner";
 
 interface ProductImage {
   url: string;
@@ -110,6 +41,9 @@ export default function ProductItem({
 }: ProductItemProps) {
   const [quantity, setQuantity] = useState(1);
   const [isHovered, setIsHovered] = useState(false);
+  const [user, setUser] = useState<any>(null); // State to store user data
+  console.log('user', user);
+  const jwt = user?.jwt; // Extract JWT from user data
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
 
@@ -142,13 +76,38 @@ export default function ProductItem({
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!product?.name) {
-      console.warn("Product name is missing. Cannot add to cart.");
+    if (!jwt) {
+      alert("Please login to add items to cart");
       return;
     }
-    console.log("Adding to cart:", product.name, "Quantity:", quantity);
-    // Implement your cart functionality here
+    const data = {
+      data: {
+        quantity: quantity,
+        amount: quantity * product.sellingPice,
+        product: product.id,
+        users_permissions_user: user.id,
+      },
+    };
+    console.log("Adding to cart", data);
+    console.log("JWT", jwt);
+    GlobalApi.addToCart(data, jwt)
+      .then((res) => {
+        console.log("Added to cart", res);
+        toast.success("Added to cart");
+      })
+      .catch((err) => {
+        console.error("Error adding to cart", err);
+        toast.error("Error adding to cart");
+      });
   };
+
+  // Safely access sessionStorage on the client side
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   return (
     <div
