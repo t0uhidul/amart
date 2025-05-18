@@ -12,17 +12,63 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAuth } from "@/contexts/auth-context";
 import { PhoneInput } from "./phone-input";
 
+// Replace the countryCodes array with this enhanced version that includes ISO codes
+const countryCodes = [
+  { code: "+1", country: "US", name: "United States" },
+  { code: "+1", country: "CA", name: "Canada" },
+  { code: "+44", country: "GB", name: "United Kingdom" },
+  { code: "+61", country: "AU", name: "Australia" },
+  { code: "+33", country: "FR", name: "France" },
+  { code: "+880", country: "BD", name: "Bangladesh" },
+  { code: "+49", country: "DE", name: "Germany" },
+  { code: "+91", country: "IN", name: "India" },
+  { code: "+86", country: "CN", name: "China" },
+  { code: "+81", country: "JP", name: "Japan" },
+  { code: "+52", country: "MX", name: "Mexico" },
+  { code: "+55", country: "BR", name: "Brazil" },
+  { code: "+34", country: "ES", name: "Spain" },
+  { code: "+39", country: "IT", name: "Italy" },
+  { code: "+7", country: "RU", name: "Russia" },
+  { code: "+82", country: "KR", name: "South Korea" },
+];
+
+// Function to convert country code to flag emoji
+const getCountryFlag = (countryCode: string) => {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
+
 export function LoginModal() {
   const { authState, login, hideModals, isLoading } = useAuth();
+  const [selectedCountry, setSelectedCountry] = useState(countryCodes[0]);
   const [phoneNumber, setPhoneNumber] = useState("");
+
+  const handleCountryChange = (value: string) => {
+    const country = countryCodes.find(
+      (c) => `${c.country}-${c.code}` === value
+    );
+    if (country) {
+      setSelectedCountry(country);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (phoneNumber) {
-      await login(phoneNumber);
+    if (phoneNumber && selectedCountry) {
+      await login(phoneNumber,selectedCountry);
     }
   };
 
@@ -40,13 +86,51 @@ export function LoginModal() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="phone">Phone Number</Label>
-            <PhoneInput
-              value={phoneNumber}
-              onChange={setPhoneNumber}
-              id="phone"
-              placeholder="+1 (555) 000-0000"
-              className="w-full"
-            />
+            <div className="flex gap-2">
+              <Select
+                defaultValue={`${selectedCountry.country}-${selectedCountry.code}`}
+                onValueChange={handleCountryChange}
+              >
+                <SelectTrigger className="w-[130px] flex-shrink-0">
+                  <SelectValue placeholder="Code">
+                    {selectedCountry && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">
+                          {getCountryFlag(selectedCountry.country)}
+                        </span>
+                        <span>{selectedCountry.code}</span>
+                      </div>
+                    )}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent className="max-h-[300px]">
+                  {countryCodes.map((country) => (
+                    <SelectItem
+                      key={`${country.country}-${country.code}`}
+                      value={`${country.country}-${country.code}`}
+                      className="flex items-center"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">
+                          {getCountryFlag(country.country)}
+                        </span>
+                        <span>{country.code}</span>
+                        <span className="text-muted-foreground text-xs ml-1">
+                          {country.name}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <PhoneInput
+                value={phoneNumber}
+                onChange={setPhoneNumber}
+                id="phone"
+                placeholder="Ex: 017XXXXXXXX"
+                className="w-full"
+              />
+            </div>
           </div>
           <Button
             type="submit"

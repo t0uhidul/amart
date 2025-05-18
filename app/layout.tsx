@@ -5,8 +5,7 @@ import Header from "./_components/Header";
 import Footer from "./_components/Footer";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/contexts/auth-context";
-import { LoginModal } from "./_components/login-modal";
-import { OtpVerificationModal } from "./_components/otp-verification-modal";
+import { AuthModalsProvider } from "@/providers/auth-modal-provider";
 
 const lora = Lora({
   variable: "--font-lora",
@@ -30,10 +29,9 @@ export default function RootLayout({
         <AuthProvider>
           <Toaster />
           <Header />
+          <AuthModalsProvider />
           {children}
           <Footer />
-          <LoginModal />
-          <OtpVerificationModal />
         </AuthProvider>
       </body>
     </html>

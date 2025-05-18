@@ -5,6 +5,11 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 
 type AuthState = "unauthenticated" | "login" | "verifying" | "authenticated";
+type CountryCode = {
+  code: string;
+  name: string;
+  country: string;
+};
 
 interface AuthContextType {
   authState: AuthState;
@@ -25,6 +30,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>("unauthenticated");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [country_code, setCountryCode] = useState("+880")
   const [isLoading, setIsLoading] = useState(false);
 
   // Check if user is already authenticated on mount
@@ -49,15 +55,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (phone: string) => {
+  const login = async (phone: string, country_code: CountryCode) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/send-otp", {
+      const response = await fetch("http://127.0.0.1:8000/auth/phone-login/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phoneNumber: phone }),
+        body: JSON.stringify({
+          country_code: country_code.code,
+          phone_number: phone,
+        }),
       });
 
       const data = await response.json();
@@ -67,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       setPhoneNumber(phone);
+      setCountryCode(country_code.code);
       setAuthState("verifying");
 
       toast("OTP Sent", {
@@ -83,15 +93,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const verifyOtp = async (otp: string) => {
+  const verifyOtp = async (
+    otp: string
+  ) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/verify-otp", {
+      const response = await fetch("http://127.0.0.1:8000//auth/verify-otp/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phoneNumber, otp }),
+        body: JSON.stringify({
+          country_code: country_code,
+          phone_number: phoneNumber,
+          phoneNumber,
+          otp: otp,
+        }),
       });
 
       const data = await response.json();
