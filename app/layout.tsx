@@ -28,8 +28,8 @@ export default function RootLayout({
       <body className={`${lora.variable} antialiased`}>
         <AuthProvider>
           <Toaster />
-          <Header />
           <AuthModalsProvider />
+          <Header />
           {children}
           <Footer />
         </AuthProvider>

@@ -1,14 +1,22 @@
 import axios from "axios";
 
+const Base_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+if (!Base_URL) {
+  throw new Error(
+    "NEXT_PUBLIC_BACKEND_BASE_URL is not defined in the environment variables"
+  );
+}
+
 const axiosClient = axios.create({
-  baseURL: "http://127.0.0.1:1337/api",
+  baseURL: Base_URL,
 });
 
-const getCategory = () => axiosClient.get("/categories");
+// const getCategory = () => axiosClient.get("/categories");
 
 const getCategoryList = () =>
-  axiosClient.get("/categories?populate=*").then((res) => {
-    return res.data.data;
+  axiosClient.get("/store/categories/").then((res) => {
+    // console.log("resp", res);
+    return res.data.results;
   });
 const getSliders = () =>
   axiosClient.get("/sliders?populate=*").then((resp) => {
@@ -33,7 +41,7 @@ const addToCart = (data, jwt) =>
   });
 
 export default {
-  getCategory,
+  // getCategory,
   getSliders,
   getProducts,
   getCategoryList,

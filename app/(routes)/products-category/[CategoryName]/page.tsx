@@ -1,4 +1,4 @@
-import Products from "@/app/_components/products";
+// import Products from "@/app/_components/products";
 import TopCategories from "@/app/_components/top-category";
 import GlobalApi from "@/app/_utils/GlobalApi";
 
@@ -11,22 +11,22 @@ export default async function ProductsByCategory({
   const categoryName = params.CategoryName;
 
   // Fetch data using the category name
-  const productList = await GlobalApi.getProductByCategory(categoryName);
+  // const productList = await GlobalApi.getProductByCategory(categoryName);
   const categoryList = await GlobalApi.getCategoryList();
 
   // Log the productList for debugging
-  console.log("productList", productList);
+  // console.log("productList", productList);
 
   // Handle empty productList
-  if (!productList || productList.length === 0) {
-    return <div>No products found for {categoryName}.</div>;
-  }
+  // if (!productList || productList.length === 0) {
+  //   return <div>No products found for {categoryName}.</div>;
+  // }
 
   return (
     <div>
       <h1>{categoryName}</h1>
       <TopCategories categoryList={categoryList} />
-      <Products productList={productList} />
+      {/* <Products productList={productList} /> */}
     </div>
   );
 }

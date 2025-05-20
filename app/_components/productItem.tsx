@@ -19,7 +19,7 @@ interface Category {
 
 interface Product {
   id?: string;
-  name: string;
+  name: string; 
   description: string;
   mrp: string;
   sellingPice: string;

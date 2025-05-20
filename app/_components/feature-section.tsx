@@ -29,12 +29,15 @@ export default function FeaturesSection() {
   ];
 
   return (
-    <section className="py-12 bg-white h-screen flex items-center justify-center">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <section className="py-10 bg-white min-h-[60vh] flex items-center justify-center">
+      <div className="container mx-auto px-2 sm:px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="flex flex-col items-center text-center">
-              <div className="bg-[#f2f5e9] rounded-full p-4 mb-4 w-16 h-16 flex items-center justify-center">
+            <div
+              key={index}
+              className="flex flex-col items-center text-center max-w-xs mx-auto"
+            >
+              <div className="bg-[#f2f5e9] rounded-full p-4 mb-6 md:mb-4 w-16 h-16 flex items-center justify-center">
                 <feature.icon className="w-6 h-6 text-gray-700" />
               </div>
               <h3 className="text-lg font-bold mb-2">{feature.title}</h3>

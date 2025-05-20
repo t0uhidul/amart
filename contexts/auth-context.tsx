@@ -1,5 +1,6 @@
 "use client";
 
+import GlobalApi from "@/app/_utils/GlobalApi";
 import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -9,6 +10,13 @@ type CountryCode = {
   code: string;
   name: string;
   country: string;
+};
+type Category = {
+  id: number;
+  name: string;
+  slug: string;
+  image: string;
+  image_alt: string;
 };
 
 interface AuthContextType {
@@ -23,6 +31,7 @@ interface AuthContextType {
   resendOtp: () => Promise<void>;
   logout: () => void;
   isLoading: boolean;
+  categoryList: Category[];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,7 +39,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>("unauthenticated");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [country_code, setCountryCode] = useState("+880")
+  const [country_code, setCountryCode] = useState("+880");
+  const [categoryList, setCategoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // Check if user is already authenticated on mount
@@ -39,6 +49,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (token) {
       setAuthState("authenticated");
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await GlobalApi.getCategoryList();
+        setCategoryList(res);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   const showLoginModal = () => {
@@ -93,9 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const verifyOtp = async (
-    otp: string
-  ) => {
+  const verifyOtp = async (otp: string) => {
     setIsLoading(true);
     try {
       const response = await fetch("http://127.0.0.1:8000//auth/verify-otp/", {
@@ -189,6 +210,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         resendOtp,
         logout,
         isLoading,
+        categoryList,
       }}
     >
       {children}
