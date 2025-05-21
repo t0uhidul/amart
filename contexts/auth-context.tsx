@@ -32,6 +32,8 @@ interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
   categoryList: Category[];
+  numberOfCartItems: number;
+  handleCartItemCountChange: (count: number) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -42,6 +44,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [country_code, setCountryCode] = useState("+880");
   const [categoryList, setCategoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [numberOfCartItems, setNumberOfCartItems] = useState(0);
+
+  const handleCartItemCountChange = (count: number) => {
+    setNumberOfCartItems(count);
+  };  
 
   // Check if user is already authenticated on mount
   useEffect(() => {
@@ -211,6 +218,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         isLoading,
         categoryList,
+        numberOfCartItems,
+        handleCartItemCountChange,
       }}
     >
       {children}

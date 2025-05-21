@@ -9,40 +9,16 @@ import { Badge } from "@/components/ui/badge";
 import GlobalApi from "../_utils/GlobalApi";
 import { toast } from "sonner";
 
-interface ProductImage {
-  url: string;
-}
-
-interface Category {
-  name: string;
-}
-
-interface Product {
-  id?: string;
-  name: string; 
-  description: string;
-  mrp: string;
-  sellingPice: string;
-  ItemQuantityType: string;
-  image?: ProductImage[];
-  categories?: Category[];
-}
-
-interface ProductItemProps {
-  product: Product;
-  onQuickView: () => void;
-  isFeatured?: boolean;
-}
-
 export default function ProductItem({
   product,
   onQuickView,
   isFeatured = false,
-}: ProductItemProps) {
+}) {
   const [quantity, setQuantity] = useState(1);
   const [isHovered, setIsHovered] = useState(false);
   const [user, setUser] = useState<any>(null); // State to store user data
-  console.log('user', user);
+  // const {  handleCartItemCountChange } = useAuth();
+  console.log("user", user);
   const jwt = user?.jwt; // Extract JWT from user data
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
@@ -76,10 +52,6 @@ export default function ProductItem({
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!jwt) {
-      alert("Please login to add items to cart");
-      return;
-    }
     const data = {
       data: {
         quantity: quantity,
@@ -157,7 +129,7 @@ export default function ProductItem({
           {product.description}
         </p>
 
-        <div className="flex items-center mb-1">
+        {/* <div className="flex items-center mb-1">
           {[1, 2, 3, 4, 5].map((star) => (
             <Star
               key={star}
@@ -169,7 +141,7 @@ export default function ProductItem({
             />
           ))}
           <span className="text-xs text-gray-500 ml-1">(4.0)</span>
-        </div>
+        </div> */}
 
         <div className="mt-auto">
           <div className="flex items-center gap-2 mb-2">

@@ -20,7 +20,10 @@ export default function Header() {
 
   const [searchValue, setSearchValue] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
-  const { categoryList } = useAuth();
+  const { categoryList, numberOfCartItems } =
+    useAuth();
+
+
 
   useEffect(() => {
     // Add scroll event listener
@@ -111,19 +114,21 @@ export default function Header() {
             </div>
           </div>
 
-          <Link href="/cart" className="relative">
+          <Link href="/order-the-cart-items" className="relative">
             <motion.div
               whileHover={{ scale: 1.05 }}
               className="flex items-center gap-2 cursor-pointer"
             >
               <div className="relative">
                 <ShoppingBasket className="h-5 w-5 text-primary" />
-                <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                  0
-                </span>
+                {numberOfCartItems > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-semibold rounded-full px-[6px]">
+                    {numberOfCartItems}
+                  </span>
+                )}
               </div>
               <span className="hidden sm:inline text-sm font-medium">
-                0 items
+                items
               </span>
             </motion.div>
           </Link>

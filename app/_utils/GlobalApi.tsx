@@ -20,18 +20,19 @@ const getCategoryList = () =>
   });
 const getSliders = () =>
   axiosClient.get("/sliders?populate=*").then((resp) => {
-    return resp.data.data;
+    return resp.data.results;
   });
 
 const getProducts = () =>
-  axiosClient.get("/products?populate=*").then((res) => {
-    return res.data.data;
+  axiosClient.get("/store/products/").then((res) => {
+    console.log("res", res.data.results);
+    return res.data.results;
   });
 
-const getProductByCategory = (category: string) =>
+const getProductByCategory = (slug: string) =>
   axiosClient
-    .get(`/products?filters[categories][name][$in]=${category}&populate=*`)
-    .then((res) => res.data.data);
+    .get(`store/products/category/${slug}/`)
+    .then((res) => res.data.results);
 
 const addToCart = (data, jwt) =>
   axiosClient.post("/users-cart", data, {

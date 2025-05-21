@@ -18,7 +18,7 @@ export default function TopCategoryList({ categoryList }: TopCategoriesProps) {
 
         return (
           <Link
-            href={"/products-category/" + category.name}
+            href={"/products-category/" + category.slug}
             key={category.id}
             className="flex flex-col items-center group"
           >
