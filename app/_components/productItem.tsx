@@ -1,13 +1,13 @@
 "use client";
 
-import type React from "react";
 import { Button } from "@/components/ui/button";
-import { ShoppingBagIcon, Eye, Star } from "lucide-react";
+import { ShoppingBagIcon, Eye, Star, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import GlobalApi from "../_utils/GlobalApi";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function ProductItem({
   product,
@@ -15,11 +15,9 @@ export default function ProductItem({
   isFeatured = false,
 }) {
   const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [user, setUser] = useState<any>(null); // State to store user data
-  // const {  handleCartItemCountChange } = useAuth();
-  console.log("user", user);
-  const jwt = user?.jwt; // Extract JWT from user data
+  const { showLoginModal, authState, authToken, authId } = useAuth();
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
 
@@ -52,34 +50,34 @@ export default function ProductItem({
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
+
+    if (!authToken && authState !== "authenticated") {
+      showLoginModal();
+      return;
+    }
+
     const data = {
-      data: {
-        quantity: quantity,
-        amount: quantity * product.sellingPice,
-        product: product.id,
-        users_permissions_user: user.id,
-      },
+      user: authId,
+      product: product.id,
+      quantity: quantity,
     };
-    console.log("Adding to cart", data);
-    console.log("JWT", jwt);
-    GlobalApi.addToCart(data, jwt)
-      .then((res) => {
-        console.log("Added to cart", res);
-        toast.success("Added to cart");
+
+    setLoading(true);
+
+    GlobalApi.addToCart(data, authToken)
+      .then(() => {
+        toast.success("Added to beg");
       })
       .catch((err) => {
-        console.error("Error adding to cart", err);
+        console.error("Error adding to cart", err.response?.data || err);
         toast.error("Error adding to cart");
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 800);
       });
   };
-
-  // Safely access sessionStorage on the client side
-  useEffect(() => {
-    const storedUser = sessionStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
 
   return (
     <div
@@ -174,10 +172,17 @@ export default function ProductItem({
             </div>
             <Button
               onClick={handleAddToCart}
-              className="flex-1 h-8 text-xs flex items-center gap-1 bg-green-600 hover:bg-green-700"
+              className="flex-1 h-8 text-xs flex items-center justify-center gap-1 bg-green-600 hover:bg-green-700"
+              disabled={loading}
             >
-              <ShoppingBagIcon size={14} />
-              ADD TO Bag
+              {loading ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <>
+                  <ShoppingBagIcon size={14} />
+                  ADD TO Bag
+                </>
+              )}
             </Button>
           </div>
         </div>

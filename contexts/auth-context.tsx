@@ -21,6 +21,8 @@ type Category = {
 
 interface AuthContextType {
   authState: AuthState;
+  authToken: string | null;
+  authId: string | null;
   phoneNumber: string;
   setPhoneNumber: (phone: string) => void;
   showLoginModal: () => void;
@@ -32,29 +34,32 @@ interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
   categoryList: Category[];
-  numberOfCartItems: number;
-  handleCartItemCountChange: (count: number) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>("unauthenticated");
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [authId, setAuthId] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [country_code, setCountryCode] = useState("+880");
   const [categoryList, setCategoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [numberOfCartItems, setNumberOfCartItems] = useState(0);
+  // const [numberOfCartItems, setNumberOfCartItems] = useState(0);
 
-  const handleCartItemCountChange = (count: number) => {
-    setNumberOfCartItems(count);
-  };  
+  // const handleCartItemCountChange = (count: number) => {
+  //   setNumberOfCartItems(count);
+  // };
 
   // Check if user is already authenticated on mount
   useEffect(() => {
     const token = localStorage.getItem("authToken");
+    const id = localStorage.getItem("authId");
     if (token) {
       setAuthState("authenticated");
+      setAuthToken(token);
+      setAuthId(id);
     }
   }, []);
 
@@ -82,6 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const hideModals = () => {
     if (authState !== "authenticated") {
       setAuthState("unauthenticated");
+      setAuthToken(null);
     }
   };
 
@@ -146,8 +152,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Store auth token
-      if (data.token) {
-        localStorage.setItem("authToken", data.token);
+      if (data.access_token) {
+        localStorage.setItem("authToken", data.access_token);
+        setAuthToken(data.access_token);
+      }
+      if (data.user_id) {
+        localStorage.setItem("authId", data.user_id);
+        setAuthId(data.user_id);
       }
 
       setAuthState("authenticated");
@@ -199,14 +210,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("authId");
     setAuthState("unauthenticated");
     setPhoneNumber("");
+    setAuthToken(null);
+    setAuthId(null);
   };
 
   return (
     <AuthContext.Provider
       value={{
         authState,
+        authToken,
+        authId,
         phoneNumber,
         setPhoneNumber,
         showLoginModal,
@@ -218,8 +234,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         isLoading,
         categoryList,
-        numberOfCartItems,
-        handleCartItemCountChange,
+        // numberOfCartItems,
+        // handleCartItemCountChange,
       }}
     >
       {children}

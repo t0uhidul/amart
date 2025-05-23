@@ -14,8 +14,7 @@ import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@/components/ui/input-otp"
-
+} from "@/components/ui/input-otp";
 
 export function OtpVerificationModal() {
   const {
@@ -85,7 +84,12 @@ export function OtpVerificationModal() {
         </DialogHeader>
         <div className="space-y-4">
           <div className="flex justify-center py-4">
-            <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+            <InputOTP
+              maxLength={6}
+              value={otp}
+              onChange={setOtp}
+              onComplete={handleVerify}
+            >
               <InputOTPGroup>
                 <InputOTPSlot index={0} />
                 <InputOTPSlot index={1} />

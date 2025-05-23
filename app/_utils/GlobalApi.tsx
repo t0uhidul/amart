@@ -26,6 +26,7 @@ const getSliders = () =>
 const getProducts = () =>
   axiosClient.get("/store/products/").then((res) => {
     console.log("res", res.data.results);
+
     return res.data.results;
   });
 
@@ -34,12 +35,24 @@ const getProductByCategory = (slug: string) =>
     .get(`store/products/category/${slug}/`)
     .then((res) => res.data.results);
 
-const addToCart = (data, jwt) =>
-  axiosClient.post("/users-cart", data, {
+const addToCart = (data: any, jwt: string) =>
+  axiosClient.post("/store/user-cart/", data, {
     headers: {
       Authorization: `Bearer ${jwt}`,
     },
   });
+
+const getToCart = (jwt: string) =>
+  axiosClient
+    .get("/store/user-cart/", {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+    .then((res) => {
+      console.log("cart", res?.data);
+      return res.data.result;
+    });
 
 export default {
   // getCategory,
@@ -48,4 +61,5 @@ export default {
   getCategoryList,
   getProductByCategory,
   addToCart,
+  getToCart,
 };

@@ -5,7 +5,7 @@ import ProductItem from "./productItem";
 import ProductModal from "./product-modal";
 import { ShoppingBag } from "lucide-react";
 
-type  Product= {
+type Product = {
   id: number;
   name: string;
   mrp: string;
@@ -14,9 +14,9 @@ type  Product= {
   image: string | null;
   categories: string[];
   is_featured: boolean;
-}
+};
 
-export default function Products({ productList}: { productList: Product[] }) {
+export default function Products({ productList }: { productList: Product[] }) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -24,11 +24,11 @@ export default function Products({ productList}: { productList: Product[] }) {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
+  // console.log("productList-----------------", productList);
 
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
 
   return (
     <div className="flex flex-col pt-6 px-4 md:px-10 max-w-7xl mx-auto">

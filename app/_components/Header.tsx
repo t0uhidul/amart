@@ -14,16 +14,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth-context";
+import GlobalApi from "../_utils/GlobalApi";
 
 export default function Header() {
   const { authState, showLoginModal, logout, phoneNumber } = useAuth();
 
   const [searchValue, setSearchValue] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
-  const { categoryList, numberOfCartItems } =
-    useAuth();
-
-
+  const [numberOfCartItems, setNumberOfCartItems] = useState(0);
+  const { categoryList, authToken } = useAuth();
 
   useEffect(() => {
     // Add scroll event listener
@@ -34,6 +33,16 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!authToken) {
+      setNumberOfCartItems(0);
+      return;
+    }
+    GlobalApi.getToCart(authToken).then((item: any[]) => {
+      setNumberOfCartItems(item?.length || 0);
+    });
+  }, [authToken]);
 
   return (
     <motion.header
@@ -128,7 +137,7 @@ export default function Header() {
                 )}
               </div>
               <span className="hidden sm:inline text-sm font-medium">
-                items
+                {numberOfCartItems} items
               </span>
             </motion.div>
           </Link>
