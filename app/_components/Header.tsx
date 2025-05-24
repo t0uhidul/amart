@@ -14,15 +14,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth-context";
+import { useCart } from "@/contexts/cart-context";
 import GlobalApi from "../_utils/GlobalApi";
 
 export default function Header() {
-  const { authState, showLoginModal, logout, phoneNumber } = useAuth();
+  const {
+    authState,
+    showLoginModal,
+    logout,
+    phoneNumber,
+    categoryList,
+    authToken,
+  } = useAuth();
+  const { cartCount, setCartCount, removeAllItesmsFromCart } = useCart();
 
   const [searchValue, setSearchValue] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
-  const [numberOfCartItems, setNumberOfCartItems] = useState(0);
-  const { categoryList, authToken } = useAuth();
 
   useEffect(() => {
     // Add scroll event listener
@@ -32,16 +39,15 @@ export default function Header() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [authToken]);
+
+
 
   useEffect(() => {
-    if (!authToken) {
-      setNumberOfCartItems(0);
-      return;
+    if (!authToken && authState === "authenticated") {
+      removeAllItesmsFromCart();
+      setCartCount(0);
     }
-    GlobalApi.getToCart(authToken).then((item: any[]) => {
-      setNumberOfCartItems(item?.length || 0);
-    });
   }, [authToken]);
 
   return (
@@ -130,14 +136,14 @@ export default function Header() {
             >
               <div className="relative">
                 <ShoppingBasket className="h-5 w-5 text-primary" />
-                {numberOfCartItems > 0 && (
+                {cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-semibold rounded-full px-[6px]">
-                    {numberOfCartItems}
+                    {cartCount}
                   </span>
                 )}
               </div>
               <span className="hidden sm:inline text-sm font-medium">
-                {numberOfCartItems} items
+                {cartCount} items
               </span>
             </motion.div>
           </Link>

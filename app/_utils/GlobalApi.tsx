@@ -50,9 +50,23 @@ const getToCart = (jwt: string) =>
       },
     })
     .then((res) => {
-      console.log("cart", res?.data);
-      return res.data.result;
+      console.log("cart=========", res?.data);
+      return res.data;
     });
+
+const removeOneFormCart = (jwt: string, id: number) =>
+  axiosClient.delete(`/store/user-cart/${id}`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+
+const removeAllFormCart = (jwt: string) =>
+  axiosClient.delete("/store/user-cart/", {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
 
 export default {
   // getCategory,
@@ -62,4 +76,6 @@ export default {
   getProductByCategory,
   addToCart,
   getToCart,
+  removeOneFormCart,
+  removeAllFormCart,
 };

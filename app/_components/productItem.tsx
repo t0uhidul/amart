@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import GlobalApi from "../_utils/GlobalApi";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth-context";
+import { useCart } from "@/contexts/cart-context";
 
 export default function ProductItem({
   product,
@@ -18,6 +19,7 @@ export default function ProductItem({
   const [loading, setLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { showLoginModal, authState, authToken, authId } = useAuth();
+  const { setCartCount } = useCart();
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
 
@@ -48,7 +50,7 @@ export default function ProductItem({
       100
   );
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
     if (!authToken && authState !== "authenticated") {
@@ -64,19 +66,20 @@ export default function ProductItem({
 
     setLoading(true);
 
-    GlobalApi.addToCart(data, authToken)
-      .then(() => {
-        toast.success("Added to beg");
-      })
-      .catch((err) => {
-        console.error("Error adding to cart", err.response?.data || err);
-        toast.error("Error adding to cart");
-      })
-      .finally(() => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 800);
-      });
+    try {
+      await GlobalApi.addToCart(data, authToken);
+      toast.success("Added to bag");
+
+      const items: any[] = await GlobalApi.getToCart(authToken);
+      setCartCount(items?.length || 0); // <- update cart count here
+    } catch (err: any) {
+      console.error("Error adding to cart", err.response?.data || err);
+      toast.error("Error adding to cart");
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 800);
+    }
   };
 
   return (

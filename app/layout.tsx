@@ -6,6 +6,7 @@ import Footer from "./_components/Footer";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/contexts/auth-context";
 import { AuthModalsProvider } from "@/providers/auth-modal-provider";
+import { CartProvider } from "@/contexts/cart-context";
 
 const lora = Lora({
   variable: "--font-lora",
@@ -27,11 +28,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${lora.variable} antialiased`}>
         <AuthProvider>
-          <Toaster />
-          <AuthModalsProvider />
-          <Header />
-          {children}
-          <Footer />
+          <CartProvider>
+            <Toaster />
+            <AuthModalsProvider />
+            <Header />
+            {children}
+            <Footer />
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>
