@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth-context";
 import { useCart } from "@/contexts/cart-context";
-import GlobalApi from "../_utils/GlobalApi";
 
 export default function Header() {
   const {
@@ -26,7 +25,7 @@ export default function Header() {
     categoryList,
     authToken,
   } = useAuth();
-  const { cartCount, setCartCount, removeAllItesmsFromCart } = useCart();
+  const { cartCount, setCartCount, removeAllItemsFromCart } = useCart();
 
   const [searchValue, setSearchValue] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
@@ -41,14 +40,13 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [authToken]);
 
-
-
-  useEffect(() => {
-    if (!authToken && authState === "authenticated") {
-      removeAllItesmsFromCart();
-      setCartCount(0);
-    }
-  }, [authToken]);
+  // useEffect(() => {
+  //   if (!authToken && authState === "authenticated") {
+  //     setCartCount(0);
+  //   } else if (authToken && authState === "authenticated") {
+  //     removeAllItemsFromCart(authToken);
+  //   }
+  // }, [authToken]);
 
   return (
     <motion.header

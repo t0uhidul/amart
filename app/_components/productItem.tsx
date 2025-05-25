@@ -5,10 +5,10 @@ import { ShoppingBagIcon, Eye, Star, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
-import GlobalApi from "../_utils/GlobalApi";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth-context";
 import { useCart } from "@/contexts/cart-context";
+import { addToCart, getCartItems } from "@/lib/actions";
 
 export default function ProductItem({
   product,
@@ -19,7 +19,7 @@ export default function ProductItem({
   const [loading, setLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { showLoginModal, authState, authToken, authId } = useAuth();
-  const { setCartCount } = useCart();
+  const { setCartCount, setCartItems } = useCart();
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
 
@@ -53,32 +53,34 @@ export default function ProductItem({
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (!authToken && authState !== "authenticated") {
+    if (!authToken || authState !== "authenticated") {
       showLoginModal();
       return;
     }
 
-    const data = {
-      user: authId,
-      product: product.id,
-      quantity: quantity,
-    };
-
     setLoading(true);
 
     try {
-      await GlobalApi.addToCart(data, authToken);
-      toast.success("Added to bag");
+      await addToCart(
+        {
+          user: authId,
+          product: product.id,
+          quantity,
+        },
+        authToken
+      );
 
-      const items: any[] = await GlobalApi.getToCart(authToken);
-      setCartCount(items?.length || 0); // <- update cart count here
-    } catch (err: any) {
-      console.error("Error adding to cart", err.response?.data || err);
-      toast.error("Error adding to cart");
+      toast.success("Added to cart");
+
+      const items = await getCartItems(authToken);
+      console.log("Cart items:", items);
+      setCartCount(items?.data?.length || 0);
+    } catch (error: any) {
+      const message = error?.response?.data?.detail || "Failed to add to cart";
+      console.error("Add to cart error:", message);
+      toast.error(message);
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 800);
+      setLoading(false);
     }
   };
 

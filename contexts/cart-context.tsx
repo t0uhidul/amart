@@ -1,56 +1,76 @@
-// contexts/cart-context.tsx
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { getCartItems } from "@/lib/actions";
+import { getEndpoint } from "@/lib/endpoint";
+import { handleError, handleSuccess } from "@/lib/request";
+import { AnyType, AuthToken } from "@/lib/types";
+import axios from "axios";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./auth-context";
 
-const CartContext = createContext<any>(null);
+type CartContextType = {
+  cartCount: number;
+  setCartCount: (count: number) => void;
+  removeAllItemsFromCart: (authToken: AuthToken) => Promise<unknown>;
+  cartItems?: AnyType[];
+  setCartItems?: (items: AnyType[]) => void;
+};
 
+const CartContext = createContext<CartContextType>({
+  cartCount: 0,
+  setCartCount: () => {},
+  removeAllItemsFromCart: async () => {},
+});
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartCount, setCartCount] = useState(0);
 
-//    const removeAllItesmsFromCart = async (authToken) => {
-//     setIsLoading(true);
-//     try {
-//       const response = await fetch("http://127.0.0.1:8000/auth/phone-login/", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           country_code: country_code.code,
-//           phone_number: phone,
-//         }),
-//       });
+  const { authToken } = useAuth();
 
-//       const data = await response.json();
+  useEffect(() => {
+    if (authToken) {
+      getCartItems(authToken).then((items) => {
+        setCartCount(items?.data?.length || 0);
+      });
+    } else {
+      setCartCount(0);
+    }
+  }, [authToken]);
 
-//       if (!response.ok) {
-//         throw new Error(data.message || "Failed to send OTP");
-//       }
+  const removeAllItemsFromCart = async (authToken: AuthToken) => {
+    try {
+      const endpoint = await getEndpoint("removeAllCartItems");
 
-//       setPhoneNumber(phone);
-//       setCountryCode(country_code.code);
-//       setAuthState("verifying");
-
-//       toast("OTP Sent", {
-//         description: "Please check your phone for the verification code",
-//       });
-//     } catch (error) {
-//       console.error("Error sending OTP:", error);
-//       toast.error("Error", {
-//         description:
-//           error instanceof Error ? error.message : "Failed to send OTP",
-//       });
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
+      const response = await axios.delete(endpoint, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      setCartCount(0);
+      return handleSuccess(response);
+    } catch (error) {
+      return handleError(error);
+    }
+  };
 
   return (
-    <CartContext.Provider value={{ cartCount, setCartCount, removeAllItesmsFromCart }}>
+    <CartContext.Provider
+      value={{
+        cartCount,
+        setCartCount,
+        removeAllItemsFromCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
 };
 
-export const useCart = () => useContext(CartContext);
+export function useCart() {
+  const context = useContext(CartContext);
+
+  if (!context) {
+    throw new Error("useAuth must be used within a AuthProvider");
+  }
+
+  return context;
+}
