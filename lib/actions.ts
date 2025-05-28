@@ -14,9 +14,10 @@ export async function getCartItems(jwt: string) {
         Authorization: `Bearer ${jwt}`,
       },
     });
-    
-    return handleSuccess(response);
+    // return response;
+    return { ...(await handleSuccess(response)), data: response };
   } catch (error) {
+    // return error;
     return handleError(error);
   }
 }

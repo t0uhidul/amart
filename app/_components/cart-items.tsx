@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { getCartItems } from "@/lib/actions";
 import { useAuth } from "@/contexts/auth-context";
+import GlobalApi from "../_utils/GlobalApi";
 
 type CartItem = {
   id: string | number;
   name: string;
   sellingPice: string | number;
   ItemQuantityType?: string;
-  // add other properties as needed
+  // add other properties as neededp
 };
 
 export default function CartItems() {
@@ -22,9 +23,10 @@ export default function CartItems() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const items = await getCartItems(authToken);
-        if (items?.data) {
-          setCartItems(items.data);
+        // const items = await getCartItems(authToken);
+        const items = await GlobalApi.getToCart(authToken);
+        if (items) {
+          setCartItems(items);
         }
       } catch (error) {
         console.error("Error fetching cart items", error);
@@ -36,41 +38,44 @@ export default function CartItems() {
 
   const getTotalPrice = () => {
     return cartItems.reduce(
-      (total, item) => total + parseFloat(item.sellingPice || 0),
+      (total, item) => total + parseFloat(item.amount || 0),
       0
     );
   };
+
+  console.log("cart Items", cartItems);
 
   return (
     <div>
       <Card className="p-6">
         <h2 className="text-lg font-medium mb-4">Order Summary</h2>
         <div className="space-y-4">
-          {cartItems.map((item, index) => (
-            <div key={item.id} className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="relative w-16 h-16 rounded-md overflow-hidden bg-gray-100 mr-4">
-                  <div className="absolute top-0 left-0 w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs">
-                    1
+          {cartItems &&
+            cartItems.map((item, index) => (
+              <div key={item.id} className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="relative w-16 h-16 rounded-md overflow-hidden bg-gray-100 mr-4">
+                    <div className="absolute top-0 left-0 w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs">
+                      1
+                    </div>
+                    <Image
+                      src="/placeholder.svg?height=64&width=64"
+                      alt={item?.product_name}
+                      width={64}
+                      height={64}
+                      className="object-cover"
+                    />
                   </div>
-                  <Image
-                    src="/placeholder.svg?height=64&width=64"
-                    alt={item.name}
-                    width={64}
-                    height={64}
-                    className="object-cover"
-                  />
+                  <div>
+                    <p className="font-medium">{item?.product_name}</p>
+                    <p className="text-sm text-gray-500">
+                      {item?.amount / item?.quantity} x{item?.quantity}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium">{item.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {item.ItemQuantityType}
-                  </p>
-                </div>
+                <p className="font-medium">${item.amount}</p>
               </div>
-              <p className="font-medium">${item.sellingPice}</p>
-            </div>
-          ))}
+            ))}
 
           <Separator className="my-4" />
 

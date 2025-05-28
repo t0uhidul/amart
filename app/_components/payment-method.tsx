@@ -18,13 +18,13 @@ export default function PaymentMethod() {
     <div className="flex flex-col items-center justify-between mb-8">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center">
-          <Image
+          {/* <Image
             src="/placeholder.svg"
             alt="Freshgo Logo"
             width={40}
             height={40}
             className="mr-2"
-          />
+          /> */}
           <h1 className="text-xl font-semibold text-green-600">Freshgo</h1>
         </div>
         <Button variant="ghost" size="icon">
@@ -34,85 +34,14 @@ export default function PaymentMethod() {
 
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
-          {/* Contact Information */}
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-medium">Contact</h2>
-              <button className="text-sm text-green-600 hover:underline">
-                Log in
-              </button>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <Input
-                  type="tel"
-                  placeholder="Email or mobile phone number"
-                  className="w-full"
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="email-updates" />
-                <Label htmlFor="email-updates" className="text-sm">
-                  Email me with news and offers
-                </Label>
-              </div>
-            </div>
-          </div>
-
           {/* Delivery Information */}
           <div>
             <h2 className="text-lg font-medium mb-4">Delivery</h2>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="country" className="text-sm">
-                  Country/Region
-                </Label>
-                <Select defaultValue="us">
-                  <SelectTrigger id="country">
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="us">United States</SelectItem>
-                    <SelectItem value="ca">Canada</SelectItem>
-                    <SelectItem value="uk">United Kingdom</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Input placeholder="First name (optional)" />
-                </div>
-                <div>
-                  <Input placeholder="Last name" />
-                </div>
-              </div>
-              <div>
                 <Input placeholder="Address" />
               </div>
-              <div>
-                <Input placeholder="Apartment, suite, etc. (optional)" />
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Input placeholder="City" />
-                </div>
-                <div>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="State" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ca">California</SelectItem>
-                      <SelectItem value="ny">New York</SelectItem>
-                      <SelectItem value="tx">Texas</SelectItem>
-                      <SelectItem value="fl">Florida</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Input placeholder="ZIP code" />
-                </div>
-              </div>
+
               <div className="flex items-center space-x-2">
                 <Checkbox id="save-info" />
                 <Label htmlFor="save-info" className="text-sm">
