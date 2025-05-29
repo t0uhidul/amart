@@ -32,6 +32,8 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
               ? category.image
               : `${baseUrl}${category.image}`;
 
+            console.log("Category Image URL:", imgUrl);
+
             return (
               <Link
                 href={`/products-category/${category.slug}`}

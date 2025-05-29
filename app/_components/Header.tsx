@@ -53,11 +53,11 @@ export default function Header() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled ? "bg-white shadow-lg py-2" : "bg-[#f8f8f8] py-4"
-      }`}
+      className={`sticky top-0 z-50 w-full transition-all duration-300
+    ${isScrolled ? "bg-white shadow-lg py-2" : "bg-[#f8f8f8] py-3"}
+    min-h-[56px] md:min-h-[72px]`}
     >
-      <div className="container mx-auto px-3 md:px-4 flex justify-between items-center">
+      <div className="container mx-auto px-2 sm:px-3 md:px-4 flex justify-between items-center">
         {/* Logo and Left Section */}
         <div className="flex items-center gap-2 md:gap-6">
           <Link href="/">

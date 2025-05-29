@@ -68,7 +68,7 @@ export function LoginModal() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (phoneNumber && selectedCountry) {
-      await login(phoneNumber,selectedCountry);
+      await login(phoneNumber, selectedCountry);
     }
   };
 

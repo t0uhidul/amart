@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth-context";
 import { useCart } from "@/contexts/cart-context";
 import { addToCart, getCartItems } from "@/lib/actions";
-import GlobalApi from "../_utils/GlobalApi";
+import GlobalApi from "../../_utils/GlobalApi";
 
 export default function ProductItem({
   product,

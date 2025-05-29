@@ -1,5 +1,5 @@
-import Products from "@/app/_components/products";
-import TopCategories from "@/app/_components/top-category";
+import Products from "@/app/_components/product/products";
+import TopCategories from "@/app/_components/categorry/top-category";
 import GlobalApi from "@/app/_utils/GlobalApi";
 
 export default async function ProductsByCategory({
@@ -13,6 +13,7 @@ export default async function ProductsByCategory({
   // Fetch data using the category name
   const productList = await GlobalApi.getProductByCategory(categoryName);
   const categoryList = await GlobalApi.getCategoryList();
+  console.log("categoryList", categoryList);
 
   // Log the productList for debugging
   // console.log("productList", productList);

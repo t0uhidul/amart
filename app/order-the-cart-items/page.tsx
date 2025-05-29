@@ -1,4 +1,4 @@
-import CheckoutPage from "../_components/order-component";
+import CheckoutPage from "../_components/order/order-component";
 
 export default async function OrderAndCartItems() {
   return (

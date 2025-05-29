@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { getCartItems } from "@/lib/actions";
 import { useAuth } from "@/contexts/auth-context";
-import GlobalApi from "../_utils/GlobalApi";
+import GlobalApi from "../../_utils/GlobalApi";
 
 type CartItem = {
   id: string | number;
