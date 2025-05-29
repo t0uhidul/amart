@@ -45,10 +45,9 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
                     <Image
                       src={imgUrl}
                       alt={category.image_alt || category.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 20vw"
+                      width={160}
+                      height={160}
                       className="object-cover rounded-full"
-                      priority
                       unoptimized
                     />
                   </div>

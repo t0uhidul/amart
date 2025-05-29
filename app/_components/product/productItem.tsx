@@ -25,10 +25,8 @@ export default function ProductItem({
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
 
   // Add safety checks for product data
-  const imgUrl = product.image?.[0]?.url
-    ? product.image[0].url.startsWith("http")
-      ? product.image[0].url
-      : baseUrl + product.image[0].url
+  const imgUrl = product.image
+    ? baseUrl + product.image
     : "/placeholder.svg?height=300&width=300";
 
   const category = product.categories?.[0]?.name || "";
@@ -74,7 +72,7 @@ export default function ProductItem({
       toast.success("Added to cart");
       const items = await GlobalApi.getToCart(authToken);
       // const items = await getCartItems(authToken);
-      console.log("Cart items:", items);
+
       setCartCount(items?.length || 0);
     } catch (error: any) {
       const message = error?.response?.data?.detail || "Failed to add to cart";
@@ -120,6 +118,7 @@ export default function ProductItem({
             width={400}
             height={300}
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            unoptimized
           />
         </div>
       </div>
