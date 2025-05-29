@@ -90,7 +90,7 @@ export default function ProductItem({
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative">
-        {isFeatured && (
+        {/* {isFeatured && (
           <Badge className="absolute top-2 left-2 z-10 bg-green-600 hover:bg-green-700">
             SALE
           </Badge>
@@ -99,7 +99,7 @@ export default function ProductItem({
           <Badge className="absolute top-2 left-2 z-10 bg-red-500 hover:bg-red-600">
             {discount}% OFF
           </Badge>
-        )}
+        )} */}
         <div className="absolute top-2 right-2 z-10">
           <button
             onClick={(e) => {
