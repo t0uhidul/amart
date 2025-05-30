@@ -1,26 +1,21 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { ShoppingBagIcon, Eye, Star, Loader2 } from "lucide-react";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
-import { useAuth } from "@/contexts/auth-context";
 import { useCart } from "@/contexts/cart-context";
-import { addToCart, getCartItems } from "@/lib/actions";
-import GlobalApi from "../../_utils/GlobalApi";
+import { Product } from "@/lib/types";
+import { Eye, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function ProductItem({
   product,
   onQuickView,
   isFeatured = false,
 }) {
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const { showLoginModal, authState, authToken, authId } = useAuth();
-  const { setCartCount, setCartItems } = useCart();
+  const { cartItems, updateCart } = useCart();
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
 
@@ -29,89 +24,120 @@ export default function ProductItem({
     ? baseUrl + product.image
     : "/placeholder.svg?height=300&width=300";
 
+  console.log("product======", product);
+
   const category = product.categories?.[0]?.name || "";
 
-  const incrementQuantity = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setQuantity((prev) => prev + 1);
+  const cleanProduct = (product: Product) => ({
+    id: product.id,
+    name: product.name,
+    sellingPice: product.sellingPice,
+    quantity: 1,
+  });
+
+  useEffect(() => {
+    const existing = cartItems[product.id];
+    setQuantity(existing?.quantity || 0);
+  }, [cartItems, product.id]);
+
+  const handleAddToCart = (product: Product) => {
+    const clean = cleanProduct(product);
+
+    const existing = cartItems[clean.id] || { ...clean, quantity: 0 };
+
+    const updated = {
+      ...cartItems,
+      [clean.id]: {
+        ...clean,
+        quantity: existing.quantity + 1,
+      },
+    };
+
+    updateCart(updated);
+    setQuantity(existing.quantity + 1);
   };
 
-  const decrementQuantity = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1);
-    }
+  const incrementQuantity = (product: Product) => {
+    const clean = cleanProduct(product);
+    const existing = cartItems[clean.id] || { ...clean, quantity: 0 };
+
+    const updated = {
+      ...cartItems,
+      [clean.id]: {
+        ...clean,
+        quantity: existing.quantity + 1,
+      },
+    };
+
+    updateCart(updated);
+    setQuantity(existing.quantity + 1);
   };
 
-  const discount = Math.round(
-    ((Number.parseFloat(product.mrp) - Number.parseFloat(product.sellingPice)) /
-      Number.parseFloat(product.mrp)) *
-      100
-  );
+  const decrementQuantity = (product: Product) => {
+    const existing = cartItems[product.id];
+    if (!existing) return;
 
-  const handleAddToCart = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    if (!authToken || authState !== "authenticated") {
-      showLoginModal();
-      return;
+    const updated = { ...cartItems };
+    if (existing.quantity <= 1) {
+      delete updated[product.id];
+      setQuantity(0);
+    } else {
+      updated[product.id].quantity -= 1;
+      setQuantity(updated[product.id].quantity);
     }
 
-    setLoading(true);
-
-    try {
-      await addToCart(
-        {
-          user: authId,
-          product: product.id,
-          quantity,
-        },
-        authToken
-      );
-
-      toast.success("Added to cart");
-      const items = await GlobalApi.getToCart(authToken);
-      // const items = await getCartItems(authToken);
-
-      setCartCount(items?.length || 0);
-    } catch (error: any) {
-      const message = error?.response?.data?.detail || "Failed to add to cart";
-      console.error("Add to cart error:", message);
-      toast.error(message);
-    } finally {
-      setLoading(false);
-    }
+    updateCart(updated);
   };
+
+  // setTimeout(() => {
+  //   setLoading(true);
+  // }, 100);
+  // setLoading(false);
+
+  // try {
+  //   const newQty = 1;
+  //   setQuantity(newQty); // Update UI immediately
+
+  //   await addToCart(
+  //     {
+  //       user: authId,
+  //       product: product.id,
+  //       quantity: newQty,
+  //     },
+  //     authToken
+  //   );
+
+  //   toast.success("Added to cart");
+  //   const items = await GlobalApi.getToCart(authToken);
+  //   setCartCount(items?.length || 0);
+  // } catch (error: any) {
+  //   setQuantity(0); // rollback on error
+  //   const message = error?.response?.data?.detail || "Failed to add to cart";
+  //   console.error("Add to cart error:", message);
+  //   toast.error(message);
+  // } finally {
+  //   setLoading(false);
+  // }
 
   return (
     <div
-      className="flex flex-col border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-300"
+      className="flex flex-col border rounded-md overflow-hidden bg-white  text-sm"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative">
-        {/* {isFeatured && (
-          <Badge className="absolute top-2 left-2 z-10 bg-green-600 hover:bg-green-700">
-            SALE
-          </Badge>
-        )}
-        {discount >= 10 && !isFeatured && (
-          <Badge className="absolute top-2 left-2 z-10 bg-red-500 hover:bg-red-600">
-            {discount}% OFF
-          </Badge>
-        )} */}
-        <div className="absolute top-2 right-2 z-10">
+        <div className="absolute top-1 right-1 z-10">
           <button
             onClick={(e) => {
               e.stopPropagation();
               onQuickView();
             }}
-            className="bg-white p-1.5 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+            className="bg-white p-1 rounded-full shadow hover:bg-gray-100 transition-colors"
           >
             <Eye className="w-4 h-4 text-gray-700" />
           </button>
         </div>
-        <div className="h-48 sm:h-56 overflow-hidden">
+        <div className="h-36 sm:h-40 md:h-48 overflow-hidden">
           <Image
             src={imgUrl || "/placeholder.svg"}
             alt={product.name}
@@ -123,72 +149,53 @@ export default function ProductItem({
         </div>
       </div>
 
-      <div className="p-3 flex flex-col flex-grow">
-        <div className="text-xs text-gray-500 mb-1">{category}</div>
-        <h2 className="font-semibold text-sm sm:text-base line-clamp-1">
+      <div className="p-2 sm:p-3 flex flex-col flex-grow">
+        <div className="text-[10px] text-gray-500 mb-0.5">{category}</div>
+        <h2 className="font-semibold text-xs sm:text-sm line-clamp-1">
           {product.name}
         </h2>
-        <p className="text-xs text-gray-500 line-clamp-1 mb-2">
+        <p className="text-[11px] text-gray-500 line-clamp-1 mb-1">
           {product.description}
         </p>
 
-        {/* <div className="flex items-center mb-1">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Star
-              key={star}
-              className={`w-3 h-3 ${
-                star <= 4
-                  ? "fill-green-600 text-green-600"
-                  : "fill-gray-200 text-gray-200"
-              }`}
-            />
-          ))}
-          <span className="text-xs text-gray-500 ml-1">(4.0)</span>
-        </div> */}
-
         <div className="mt-auto">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="line-through text-xs text-red-400">
-              ৳{product.mrp}
-            </span>
-            <span className="text-base font-semibold text-green-600">
-              ৳{product.sellingPice}
-            </span>
-            <span className="text-xs text-gray-600">
-              /{product.ItemQuantityType || "Kg"}
-            </span>
+          <div className="flex items-center gap-1 text-[11px] mb-1 text-gray-600 py-2">
+            <span>1 kg</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex items-center border rounded-md">
+          <div className="flex items-center gap-2 justify-between">
+            <p className="text-sm font-bold text-gray-700">
+              ৳{product.sellingPice}
+            </p>
+            {quantity < 1 ? (
               <button
-                onClick={decrementQuantity}
-                className="px-2 py-1 text-gray-600 hover:bg-gray-100"
+                onClick={() => handleAddToCart(product)}
+                className="flex h-7 sm:h-8 min-w-[64px] sm:min-w-[72px] text-xs items-center font-bold justify-center gap-1 bg-primary/10 border border-primary text-primary rounded hover:bg-primary hover:text-white transition-colors"
+                disabled={loading}
               >
-                -
+                {loading ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <span>ADD</span>
+                )}
               </button>
-              <span className="px-2 py-1 text-sm">{quantity}</span>
-              <button
-                onClick={incrementQuantity}
-                className="px-2 py-1 text-gray-600 hover:bg-gray-100"
-              >
-                +
-              </button>
-            </div>
-            <Button
-              onClick={handleAddToCart}
-              className="flex-1 h-8 text-xs flex items-center justify-center gap-1 bg-green-600 hover:bg-green-700"
-              disabled={loading}
-            >
-              {loading ? (
-                <Loader2 size={14} className="animate-spin" />
-              ) : (
-                <>
-                  <ShoppingBagIcon size={14} />
-                  ADD TO Bag
-                </>
-              )}
-            </Button>
+            ) : (
+              <div className="flex h-7 sm:h-8 min-w-[64px] sm:min-w-[72px] items-center font-bold justify-between rounded border border-primary bg-primary text-white text-xs sm:text-sm overflow-hidden">
+                <button
+                  onClick={() => decrementQuantity(product)}
+                  className="w-1/3 h-full hover:bg-primary/90"
+                >
+                  -
+                </button>
+                <span className="w-1/3 text-center">{quantity}</span>
+                <button
+                  onClick={() => incrementQuantity(product)}
+                  className="w-1/3 h-full hover:bg-primary/90"
+                >
+                  +
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

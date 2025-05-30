@@ -1,40 +1,92 @@
 "use client";
 
-import { getCartItems } from "@/lib/actions";
 import { getEndpoint } from "@/lib/endpoint";
 import { handleError, handleSuccess } from "@/lib/request";
 import { AnyType, AuthToken } from "@/lib/types";
 import axios from "axios";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import { useAuth } from "./auth-context";
 
 type CartContextType = {
   cartCount: number;
   setCartCount: (count: number) => void;
+  cartItems: { [key: string]: AnyType };
+  setCartItems: (items: { [key: string]: AnyType }) => void;
+  totalAmount: number;
+  updateCart: (updatedItems: { [key: string]: AnyType }) => void;
   removeAllItemsFromCart: (authToken: AuthToken) => Promise<unknown>;
-  cartItems?: AnyType[];
-  setCartItems?: (items: AnyType[]) => void;
 };
 
 const CartContext = createContext<CartContextType>({
   cartCount: 0,
   setCartCount: () => {},
+  cartItems: {},
+  setCartItems: () => {},
+  totalAmount: 0,
+  updateCart: () => {},
   removeAllItemsFromCart: async () => {},
 });
-export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cartCount, setCartCount] = useState(0);
 
+export const CartProvider = ({ children }: { children: ReactNode }) => {
+  const [cartCount, setCartCount] = useState(0);
+  const [cartItems, setCartItems] = useState<{ [key: string]: AnyType }>({});
+  const [totalAmount, setTotalAmount] = useState(0);
   const { authToken } = useAuth();
 
+  // Load from localStorage initially
   useEffect(() => {
-    if (authToken) {
-      getCartItems(authToken).then((items) => {
-        setCartCount(items?.data?.length || 0);
-      });
-    } else {
-      setCartCount(0);
+    const storedItems = JSON.parse(localStorage.getItem("items") || "{}");
+
+    let count = 0;
+    let total = 0;
+
+    for (const id in storedItems) {
+      const item = storedItems[id];
+      count += item.quantity;
+      total += item.quantity * item.sellingPice; // Adjust if field is different
     }
-  }, [authToken]);
+
+    setCartItems(storedItems);
+    setCartCount(count);
+    setTotalAmount(total);
+  }, []);
+
+  const safeItem = (item: AnyType) => ({
+    id: item.id,
+    name: item.name,
+    sellingPice: item.sellingPice,
+    quantity: item.quantity,
+  });
+
+  const updateCart = (updatedItems: { [key: string]: AnyType }) => {
+    let count = 0;
+    let total = 0;
+
+    const safeItems: { [key: string]: AnyType } = {};
+
+    for (const id in updatedItems) {
+      const item = updatedItems[id];
+      const clean = safeItem(item);
+      safeItems[id] = clean;
+
+      count += clean.quantity;
+      total += clean.quantity * clean.sellingPice;
+    }
+
+    setCartItems(safeItems);
+    setCartCount(count);
+    setTotalAmount(total);
+
+    localStorage.setItem("items", JSON.stringify(safeItems));
+    localStorage.setItem("count", String(count));
+    localStorage.setItem("total", String(total));
+  };
 
   const removeAllItemsFromCart = async (authToken: AuthToken) => {
     try {
@@ -45,7 +97,14 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
           Authorization: `Bearer ${authToken}`,
         },
       });
+
+      setCartItems({});
       setCartCount(0);
+      setTotalAmount(0);
+      localStorage.removeItem("items");
+      localStorage.removeItem("count");
+      localStorage.removeItem("total");
+
       return handleSuccess(response);
     } catch (error) {
       return handleError(error);
@@ -57,6 +116,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         cartCount,
         setCartCount,
+        cartItems,
+        setCartItems,
+        totalAmount,
+        updateCart,
         removeAllItemsFromCart,
       }}
     >
@@ -69,7 +132,7 @@ export function useCart() {
   const context = useContext(CartContext);
 
   if (!context) {
-    throw new Error("useAuth must be used within a AuthProvider");
+    throw new Error("useCart must be used within a CartProvider");
   }
 
   return context;

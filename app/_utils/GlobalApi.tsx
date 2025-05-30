@@ -15,8 +15,8 @@ const axiosClient = axios.create({
 
 const getCategoryList = () =>
   axiosClient.get("/store/categories/").then((res) => {
-    // console.log("resp", res);
-    return res.data.results;
+    console.log("resp", res);
+    return res.data;
   });
 const getSliders = () =>
   axiosClient.get("/sliders?populate=*").then((resp) => {
@@ -27,13 +27,11 @@ const getProducts = () =>
   axiosClient.get("/store/products/").then((res) => {
     console.log("res", res.data.results);
 
-    return res.data.results;
+    return res.data;
   });
 
 const getProductByCategory = (slug: string) =>
-  axiosClient
-    .get(`store/products/category/${slug}/`)
-    .then((res) => res.data.results);
+  axiosClient.get(`store/products/category/${slug}/`).then((res) => res.data);
 
 const addToCart = (data: any, jwt: string) =>
   axiosClient.post("/store/user-cart/", data, {

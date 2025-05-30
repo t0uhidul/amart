@@ -15,10 +15,7 @@ export default async function ProductsByCategory({
   const categoryList = await GlobalApi.getCategoryList();
   console.log("categoryList", categoryList);
 
-  // Log the productList for debugging
-  // console.log("productList", productList);
 
-  // Handle empty productList
   if (!productList || productList.length === 0) {
     return <div>No products found for {categoryName}.</div>;
   }

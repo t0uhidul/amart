@@ -15,52 +15,64 @@ type Category = {
 };
 
 type TopCategoriesProps = {
-  categoryList: Category[];
+  categoryList?: Category[];
 };
 
 export default function TopCategories({ categoryList }: TopCategoriesProps) {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
+  const categories = categoryList;
+  console.log("Top Categories:", categories);
 
   return (
-    <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col justify-center items-center">
-      <h1 className="text-3xl font-bold text-center mb-10">Top Category</h1>
+    <div className="bg-gray-50 min-h-screen py-8">
+      <div className="container mx-auto px-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-center mb-8 text-primary">
+          Top Categories
+        </h1>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {Array.isArray(categoryList) && categoryList.length > 0 ? (
-          categoryList.map((category) => {
-            const imgUrl = category.image?.startsWith("http")
-              ? category.image
-              : `${baseUrl}${category.image}`;
+        <div className="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-10 lg:grid-cols-10 xl:grid-cols-10 gap-2 md:gap-3">
+          {Array.isArray(categories) && categories.length > 0 ? (
+            categories.map((category) => {
+              const imgUrl =
+                category.image && category.image.startsWith("http")
+                  ? category.image
+                  : category.image
+                  ? `${baseUrl}${category.image}`
+                  : "/placeholder.svg?height=120&width=120";
 
-            console.log("Category Image URL:", imgUrl);
+              return (
+                <Link
+                  href={`/products-category/${category.slug}`}
+                  key={category.id}
+                  className="group"
+                >
+                  <div className="bg-gray-100/50 rounded-lg p-2 md:p-3 transition-all duration-300 hover:bg-gray-100 hover:-translate-y-1">
+                    {/* Image Container with fixed aspect ratio */}
+                    <div className="relative w-full aspect-square mb-2 overflow-hidden rounded-md bg-white">
+                      <Image
+                        src={imgUrl || "/placeholder.svg?height=120&width=120"}
+                        alt={category.image_alt || category.name}
+                        fill
+                        className="object-contain p-2 transition-transform duration-300 group-hover:scale-110"
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 10vw, 10vw"
+                        unoptimized
+                      />
+                    </div>
 
-            return (
-              <Link
-                href={`/products-category/${category.slug}`}
-                key={category.id}
-                className="flex flex-col items-center group"
-              >
-                <div className="bg-gray-100 rounded-full p-4 mb-3 overflow-hidden transition-transform duration-300 group-hover:scale-105">
-                  <div className="relative w-36 h-36 md:w-40 md:h-40">
-                    <Image
-                      src={imgUrl}
-                      alt={category.image_alt || category.name}
-                      width={160}
-                      height={160}
-                      className="object-cover rounded-full"
-                      unoptimized
-                    />
+                    {/* Category Name */}
+                    <h3 className="text-sm font-semibold text-gray-700 text-center leading-tight group-hover:text-gray-900 transition-colors duration-200 line-clamp-2">
+                      {category.name}
+                    </h3>
                   </div>
-                </div>
-                <h3 className="text-center font-medium text-green-700 group-hover:text-green-800">
-                  {category.name}
-                </h3>
-              </Link>
-            );
-          })
-        ) : (
-          <p className="text-gray-500">No categories found.</p>
-        )}
+                </Link>
+              );
+            })
+          ) : (
+            <div className="col-span-full flex justify-center items-center py-12">
+              <p className="text-gray-500 text-lg">No categories found.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

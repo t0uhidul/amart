@@ -10,3 +10,16 @@ export const sliderList = [
     image: [{ url: "/slider/slider-3.webp" }],
   },
 ];
+
+export const searchItems = [
+  'Search "milk"',
+  'Search "bread"',
+  'Search "sugar"',
+  'Search "butter"',
+  'Search "paneer"',
+  'Search "chocolate"',
+  'Search "curd"',
+  'Search "rice"',
+  'Search "egg"',
+  'Search "chips"',
+];

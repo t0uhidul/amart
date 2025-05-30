@@ -28,7 +28,7 @@ export default function Products({ productList }: { productList: Product[] }) {
 
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl md:text-2xl font-bold text-gray-800">
-          Showing {productList.length} Products
+          Showing {productList?.length} Products
         </h2>
         <button className="text-green-600 hover:text-green-700 font-medium flex items-center">
           <ShoppingBag className="w-4 h-4 mr-1" />
@@ -36,15 +36,21 @@ export default function Products({ productList }: { productList: Product[] }) {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {productList.map((product, index) => (
-          <ProductItem
-            key={product.id || index}
-            product={product}
-            onQuickView={() => openModal(product)}
-            isFeatured={false}
-          />
-        ))}
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5  gap-4 md:gap-6">
+        {Array.isArray(productList) && productList.length > 0 ? (
+          productList.map((product, index) => (
+            <ProductItem
+              key={product.id || index}
+              product={product}
+              onQuickView={() => openModal(product)}
+              isFeatured={false}
+            />
+          ))
+        ) : (
+          <div className="col-span-full text-center text-gray-500 py-8">
+            No products found.
+          </div>
+        )}
       </div>
 
       {isModalOpen && selectedProduct && (
