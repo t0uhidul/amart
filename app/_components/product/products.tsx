@@ -43,7 +43,7 @@ export default function Products({ productList }: { productList: Product[] }) {
               key={product.id || index}
               product={product}
               onQuickView={() => openModal(product)}
-              isFeatured={false}
+              isFeatured={true}
             />
           ))
         ) : (
