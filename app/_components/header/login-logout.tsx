@@ -7,75 +7,87 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth-context";
-import { motion } from "framer-motion";
+import { ChevronDown, User, LogOut, Settings } from "lucide-react";
 
 export default function LoginLogout() {
   const { authState, showLoginModal, logout, phoneNumber } = useAuth();
-  return (
-    <div className="flex items-center py-2 px-4 sm:py-4 sm:px-8">
-      {authState === "authenticated" ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center justify-center rounded-full bg-gray-200 text-primary
-                h-9 w-9 sm:h-10 sm:w-auto sm:px-4 sm:rounded-md"
-            >
-              {/* On small screens: show only icon */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 sm:h-6 sm:w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
 
-              {/* On medium+ screens: show phone number next to icon */}
-              <span className="hidden sm:inline ml-2 font-medium text-base text-primary max-w-[8rem] truncate">
+  if (authState === "authenticated") {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            className="
+            flex items-center gap-2 px-3 py-2 rounded-lg
+            text-sm font-medium text-gray-700 
+            hover:bg-gray-100 hover:text-gray-900
+            focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+            transition-all duration-200
+            sm:px-4 sm:py-2.5
+          "
+          >
+            <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full">
+              <User className="h-4 w-4 text-primary" />
+            </div>
+
+            <div className="hidden sm:flex flex-col items-start">
+              <span className="text-xs text-gray-500">Welcome</span>
+              <span className="text-sm font-medium text-gray-900 max-w-[100px] truncate">
                 {phoneNumber}
               </span>
-            </motion.button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <div className="flex items-center gap-2 p-2">
-              <div className="rounded-full bg-primary/10 p-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-primary"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-sm font-medium">User Account</p>
-                <p className="text-xs text-gray-500 truncate max-w-[10rem]">
-                  {phoneNumber}
-                </p>
-              </div>
             </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Change PIN</DropdownMenuItem>
-            <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : (
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <button
-            onClick={showLoginModal}
-            className="text-lg sm:text-xl font-extrabold px-3 py-1 rounded-md hover:bg-gray-200 transition"
-          >
-            Login
+
+            <ChevronDown className="h-3 w-3 opacity-60 hidden sm:block" />
           </button>
-        </motion.div>
-      )}
-    </div>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent className="w-56" align="end" sideOffset={8}>
+          <div className="flex items-center gap-3 p-3 border-b">
+            <div className="flex items-center justify-center w-10 h-10 bg-primary/10 rounded-full">
+              <User className="h-5 w-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900">Account</p>
+              <p className="text-xs text-gray-500 truncate">{phoneNumber}</p>
+            </div>
+          </div>
+
+          <div className="py-1">
+            <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 cursor-pointer">
+              <Settings className="h-4 w-4" />
+              <span>Account Settings</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem
+              onClick={logout}
+              className="flex items-center gap-2 px-3 py-2 cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Log Out</span>
+            </DropdownMenuItem>
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+
+  return (
+    <button
+      onClick={showLoginModal}
+      className="
+        flex items-center gap-2 px-3 py-2 rounded-lg
+        text-sm font-medium text-primary 
+        hover:bg-primary/5 hover:text-primary
+        focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+        transition-all duration-200
+        sm:px-4 sm:py-2.5
+        border border-primary/20 hover:border-primary/40
+      "
+    >
+      <User className="h-4 w-4" />
+      <span className="hidden sm:inline">Log In</span>
+    </button>
   );
 }

@@ -8,43 +8,62 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth-context";
-import { motion } from "framer-motion";
-import { List } from "lucide-react";
+import { ChevronDown, ChevronRight, List } from "lucide-react";
 import Link from "next/link";
 
 export default function CategoryDropdown() {
   const { categoryList } = useAuth();
-  console.log("categoryList---------", categoryList);
+
   return (
-    <div className="hidden md:flex py-4 px-8">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 py-2 px-3 md:px-5 font-medium text-base"
-          >
-            <span className="md:inline hidden font-extrabold text-xl">
-              Shop by Category
-            </span>
-            <List className=" block h-5 w-5" />
-          </motion.button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>All Categories</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          {categoryList?.length > 0 &&
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className="
+          flex items-center gap-2 px-4 py-2.5 rounded-lg
+          text-sm font-medium text-gray-700 
+          hover:bg-gray-100 hover:text-gray-900
+          focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+          transition-all duration-200
+          whitespace-nowrap
+          bg-gray-50 border border-gray-200
+        "
+        >
+          <List className="h-4 w-4" />
+          <span>Shop by Category</span>
+          <ChevronDown className="h-3 w-3 opacity-60" />
+        </button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent className="w-64 " align="start" sideOffset={8}>
+        {/* <DropdownMenuLabel className="text-sm font-semibold text-gray-900">
+          Shop by Category
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator /> */}
+
+        <div className="max-h-120 overflow-y-auto border-t-3 border-primary">
+          {categoryList?.length > 0 ? (
             categoryList.map((cat: any) => (
               <DropdownMenuItem
                 key={cat.id}
-                className="font-medium cursor-pointer hover:bg-muted"
+                className="font-medium cursor-pointer hover:bg-gray-100 focus:bg-gray-100 py-2.5"
                 asChild
               >
-                <Link href={`/category/${cat.slug}`}>{cat.name}</Link>
+                <Link
+                  href={`/products-category/${cat.slug}`}
+                  className="flex items-center w-full px-2 py-1 text-sm text-gray-700 hover:text-primary focus:text-primary transition group"
+                >
+                  <span className="flex-1 truncate">{cat.name}</span>
+                  <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-primary ml-2 transition" />
+                </Link>
               </DropdownMenuItem>
-            ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+            ))
+          ) : (
+            <div className="px-2 py-4 text-sm text-gray-500 text-center h-screen flex items-center justify-center">
+              No categories available
+            </div>
+          )}
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

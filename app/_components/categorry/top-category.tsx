@@ -21,14 +21,13 @@ type TopCategoriesProps = {
 export default function TopCategories({ categoryList }: TopCategoriesProps) {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
   const categories = categoryList;
-  console.log("Top Categories:", categories);
 
   return (
     <div className="bg-gray-50 min-h-screen py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-center mb-8 text-primary">
+        {/* <h1 className="text-2xl md:text-3xl font-bold text-center mb-8 text-primary">
           Top Categories
-        </h1>
+        </h1> */}
 
         <div className="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-10 lg:grid-cols-10 xl:grid-cols-10 gap-2 md:gap-3">
           {Array.isArray(categories) && categories.length > 0 ? (
@@ -68,8 +67,23 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
               );
             })
           ) : (
-            <div className="col-span-full flex justify-center items-center py-12">
-              <p className="text-gray-500 text-lg">No categories found.</p>
+            <div className="col-span-full flex flex-col justify-center items-center min-h-[40vh]">
+              <svg
+                className="w-12 h-12 mb-4 text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p className="text-gray-500 text-lg font-semibold">
+                No product found.
+              </p>
             </div>
           )}
         </div>

@@ -51,7 +51,7 @@ export default function HeroSlider() {
 
   return (
     <div
-      className="relative w-full h-[calc(100vh-80px)] overflow-hidden"
+      className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] xl:h-[calc(100vh-80px)] overflow-hidden"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -67,120 +67,163 @@ export default function HeroSlider() {
                 transition={{ duration: 0.8 }}
                 className="absolute inset-0 w-full h-full"
               >
-                {/* Background Image with Lighter Overlay */}
+                {/* Background Image with Responsive Overlay */}
                 <div className="relative w-full h-full">
                   <Image
-                    src={slider.image[0]?.url || "/placeholder.svg"}
+                    src={
+                      slider.image[0]?.url ||
+                      "/placeholder.svg?height=800&width=1200"
+                    }
                     alt={slider.name || "Slider image"}
                     fill
-                    className="object-cover"
+                    className="object-cover object-center"
                     priority
+                    sizes="100vw"
                   />
-                  {/* Lighter gradient overlay: more white */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/60 via-white/20 to-white/20" />
+                  {/* Stronger gradient overlay for better text visibility */}
+                  <div className="absolute inset-0 to-transparent " />
                 </div>
 
-                {/* Content Container */}
-                <div className="absolute inset-0 container mx-auto px-4 flex items-center">
-                  <div className="max-w-xl">
-                    <AnimatePresence mode="wait">
-                      {textVisible && (
-                        <motion.div
-                          key={`text-${currentIndex}`}
-                          initial={{ opacity: 0, y: 30 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -30 }}
-                          transition={{
-                            duration: 0.8,
-                            ease: [0.22, 1, 0.36, 1],
-                          }}
-                          className="text-black"
-                        >
-                          <motion.span
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
-                            className="inline-block px-3 py-1 bg-primary text-white text-xs sm:text-sm font-medium rounded-full mb-4"
-                            style={{
-                              // Scale text smaller gradually on smaller screens
-                              transformOrigin: "left center",
-                            }}
-                          >
-                            100% Organic
-                          </motion.span>
-
-                          <motion.h2
-                            initial={{ opacity: 0, y: 20 }}
+                {/* Content Container - Strictly limited to left half */}
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-1/2 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+                    {/* Content centered vertically within the left half container */}
+                    <div className="w-full max-w-full">
+                      <AnimatePresence mode="wait">
+                        {textVisible && (
+                          <motion.div
+                            key={`text-${currentIndex}`}
+                            initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -30 }}
                             transition={{
                               duration: 0.8,
-                              delay: 0.4,
-                              type: "spring",
-                              stiffness: 100,
+                              ease: [0.22, 1, 0.36, 1],
                             }}
-                            className="font-bold mb-4 leading-tight drop-shadow-lg"
-                            style={{
-                              fontSize: "clamp(1.5rem, 4vw, 2.5rem)", // smaller on small screens, bigger on large
-                            }}
+                            className="text-center"
                           >
-                            Premium Organic Produce, Fresh to Your Door.
-                          </motion.h2>
+                            {/* Badge */}
+                            <motion.span
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.6, delay: 0.2 }}
+                              className="inline-block px-2 py-0.5 sm:px-2.5 sm:py-1 bg-primary text-white text-xs font-medium rounded-full mb-4 sm:mb-6"
+                            >
+                              100% Organic
+                            </motion.span>
 
-                          <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.6 }}
-                            className="mb-6 leading-relaxed drop-shadow-md"
-                            style={{
-                              fontSize: "clamp(0.8rem, 2.5vw, 1rem)", // responsive text size
-                            }}
-                          >
-                            Handpicked from the farm for superior quality. Enjoy
-                            fresh, nutritious fruits and vegetables delivered
-                            right to your doorstep. Explore our collection
-                            today!
-                          </motion.p>
+                            {/* Main Heading - Centered */}
+                            <motion.h1
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{
+                                duration: 0.8,
+                                delay: 0.4,
+                                type: "spring",
+                                stiffness: 100,
+                              }}
+                              className="font-bold mb-6 sm:mb-8 leading-tight drop-shadow-lg text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl"
+                            >
+                              Premium Organic Produce, <br />
+                              Fresh to Your Door.
+                            </motion.h1>
 
-                          <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{
-                              duration: 0.6,
-                              delay: 0.8,
-                              type: "spring",
-                            }}
-                          >
-                            <Link
-                              href="/collections"
-                              className="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
-                              style={{
-                                fontSize: "clamp(0.9rem, 2.5vw, 1rem)", // smaller on small screens
+                            {/* CTA Button - Centered */}
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{
+                                duration: 0.6,
+                                delay: 0.6,
+                                type: "spring",
                               }}
                             >
-                              Shop Now
-                            </Link>
+                              <Link
+                                href="/collections"
+                                className="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-white px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg text-xs sm:text-sm md:text-base"
+                              >
+                                Shop Now
+                              </Link>
+                            </motion.div>
                           </motion.div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
+
+                  {/* Right half - reserved for image visibility */}
+                  <div className="w-1/2"></div>
                 </div>
               </motion.div>
             )
         )}
       </AnimatePresence>
 
-      {/* Dots */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
+      {/* Navigation Dots */}
+      <div className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
         {sliderList.map((_, index) => (
           <button
             key={index}
             onClick={() => handleDotClick(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentIndex ? "bg-primary scale-125" : "bg-gray-400"
+            className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
+              index === currentIndex
+                ? "bg-primary scale-125 shadow-lg"
+                : "bg-white/60 sm:bg-gray-400 hover:bg-white/80 sm:hover:bg-gray-500"
             }`}
+            aria-label={`Go to slide ${index + 1}`}
           />
         ))}
+      </div>
+
+      {/* Navigation Arrows for larger screens */}
+      <div className="hidden lg:block">
+        <button
+          onClick={() =>
+            handleDotClick(
+              currentIndex === 0 ? sliderList.length - 1 : currentIndex - 1
+            )
+          }
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110"
+          aria-label="Previous slide"
+        >
+          <svg
+            className="w-4 h-4 sm:w-5 sm:h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
+
+        {/* <button
+          onClick={() =>
+            handleDotClick(
+              currentIndex === sliderList.length - 1 ? 0 : currentIndex + 1
+            )
+          }
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110"
+          aria-label="Next slide"
+        >
+          <svg
+            className="w-4 h-4 sm:w-5 sm:h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button> */}
       </div>
     </div>
   );

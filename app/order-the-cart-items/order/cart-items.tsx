@@ -1,112 +1,131 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { getCartItems } from "@/lib/actions";
-import { useAuth } from "@/contexts/auth-context";
-import GlobalApi from "../../_utils/GlobalApi";
 
-type CartItem = {
-  id: string | number;
-  name: string;
-  sellingPice: string | number;
-  ItemQuantityType?: string;
-  // add other properties as neededp
-};
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart } from "lucide-react";
+import { useCart } from "@/contexts/cart-context";
 
 export default function CartItems() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const { authToken } = useAuth();
+  const { cartItems, totalAmount } = useCart();
+  const items = Object.values(cartItems);
 
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        // const items = await getCartItems(authToken);
-        const items = await GlobalApi.getToCart(authToken);
-        if (items) {
-          setCartItems(items);
-        }
-      } catch (error) {
-        console.error("Error fetching cart items", error);
-      }
-    };
+  const deliveryCharge = 40;
+  const grandTotal = totalAmount + deliveryCharge;
 
-    fetchItems();
-  }, [authToken]);
-
-  const getTotalPrice = () => {
-    return cartItems.reduce(
-      (total, item) => total + parseFloat(item.amount || 0),
-      0
-    );
+  const handleConfirm = () => {
+    console.log("Order confirmed");
   };
 
-  console.log("cart Items", cartItems);
-
   return (
-    <div>
-      <Card className="p-6">
-        <h2 className="text-lg font-medium mb-4">Order Summary</h2>
-        <div className="space-y-4">
-          {cartItems &&
-            cartItems.map((item, index) => (
-              <div key={item.id} className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="relative w-16 h-16 rounded-md overflow-hidden bg-gray-100 mr-4">
-                    <div className="absolute top-0 left-0 w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs">
-                      1
-                    </div>
-                    <Image
-                      src="/placeholder.svg?height=64&width=64"
-                      alt={item?.product_name}
-                      width={64}
-                      height={64}
-                      className="object-cover"
+    <Card className="shadow-sm">
+      <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 py-2 px-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <ShoppingCart className="w-4 h-4 text-primary" />
+            <CardTitle className="text-sm">Order Summary</CardTitle>
+          </div>
+          <Badge variant="secondary" className="text-xs h-5">
+            {items.length} item{items.length > 1 ? "s" : ""}
+          </Badge>
+        </div>
+      </CardHeader>
+
+      <CardContent className="p-3">
+        <div className="space-y-3">
+          {/* Cart Items */}
+          <div className="space-y-2">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <div className="relative">
+                  <div className="w-10 h-10 rounded-md overflow-hidden bg-white border">
+                    <img
+                      src={item.image || "/placeholder.svg"}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
                     />
                   </div>
-                  <div>
-                    <p className="font-medium">{item?.product_name}</p>
-                    <p className="text-sm text-gray-500">
-                      {item?.amount / item?.quantity} x{item?.quantity}
-                    </p>
-                  </div>
+                  <Badge
+                    variant="secondary"
+                    className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full p-0 flex items-center justify-center text-[10px] bg-primary text-white"
+                  >
+                    {item.quantity}
+                  </Badge>
                 </div>
-                <p className="font-medium">${item.amount}</p>
+
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-gray-900 truncate">
+                    {item.name}
+                  </p>
+                  <p className="text-[10px] text-gray-500">
+                    ৳{item.sellingPice} × {item.quantity}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <p className="text-xs font-semibold text-gray-900">
+                    ৳{item.sellingPice * item.quantity}
+                  </p>
+                </div>
               </div>
             ))}
-
-          <Separator className="my-4" />
-
-          {/* Subtotal */}
-          <div className="flex justify-between">
-            <p>Subtotal - {cartItems.length} items</p>
-            <p className="font-medium">${getTotalPrice().toFixed(2)}</p>
           </div>
 
-          {/* Shipping */}
-          <div className="flex justify-between">
-            <p>Shipping</p>
-            <p className="text-gray-500">Enter shipping address</p>
-          </div>
+          <Separator className="my-2" />
 
-          <Separator className="my-4" />
-
-          {/* Total */}
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="font-medium">Total</p>
-              <p className="text-sm text-gray-500">USD</p>
+          {/* Pricing Breakdown */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Subtotal</span>
+              <span className="font-medium">৳{totalAmount}</span>
             </div>
-            <p className="text-xl font-bold">${getTotalPrice().toFixed(2)}</p>
+
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Delivery charge</span>
+              <span className="font-medium">৳{deliveryCharge}</span>
+            </div>
+
+            <Separator className="my-1.5" />
+
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-xs font-semibold text-gray-900">
+                  Grand Total
+                </p>
+                <p className="text-[10px] text-gray-500">Including all taxes</p>
+              </div>
+              <div className="text-right">
+                <p className="text-base font-bold text-primary">
+                  ৳{grandTotal}
+                </p>
+                <p className="text-[10px] text-gray-500">BDT</p>
+              </div>
+            </div>
           </div>
 
-          <Button className="w-full bg-green-600 hover:bg-green-700">
-            Complete order
+          {/* Confirm Button */}
+          <Button
+            onClick={handleConfirm}
+            className="w-full bg-gradient-to-r from-primary to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium py-1 text-xs h-9 mt-2"
+          >
+            Confirm Order
           </Button>
+
+          {/* Security Badge */}
+          <div className="mt-2 p-1.5 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center gap-1.5 text-green-700">
+              <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+              <p className="text-[10px] font-medium">
+                Secure checkout guaranteed
+              </p>
+            </div>
+          </div>
         </div>
-      </Card>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
