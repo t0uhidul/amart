@@ -15,7 +15,7 @@ const axiosClient = axios.create({
 
 const getCategoryList = () =>
   axiosClient.get("/store/categories/").then((res) => {
-    console.log("resp", res);
+    // console.log("resp", res);
     return res.data;
   });
 const getSliders = () =>
@@ -25,7 +25,7 @@ const getSliders = () =>
 
 const getProducts = () =>
   axiosClient.get("/store/products/").then((res) => {
-    console.log("res", res.data.results);
+    // console.log("res", res.data.results);
 
     return res.data;
   });
@@ -48,7 +48,7 @@ const getToCart = (jwt: string) =>
       },
     })
     .then((res) => {
-      console.log("cart=========", res?.data);
+      // console.log("cart=========", res?.data);
       return res.data;
     });
 

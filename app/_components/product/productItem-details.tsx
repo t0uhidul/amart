@@ -1,5 +1,3 @@
-// components/ProductDetails.tsx
-
 "use client";
 
 import { Loader2 } from "lucide-react";
@@ -43,11 +41,12 @@ export default function ProductDetails({
           <p className="text-sm font-bold text-gray-700">
             ৳{product.sellingPice}
           </p>
+
           {quantity < 1 ? (
             <button
               onClick={() => handleAddToCart(product)}
-              className="flex h-7 sm:h-8 min-w-[64px] sm:min-w-[72px] text-xs items-center font-bold justify-center gap-1 bg-primary/10 border border-primary text-primary rounded hover:bg-primary hover:text-white transition-colors"
               disabled={loading}
+              className="rounded-md font-semibold flex justify-center items-center relative text-sm py-1.5 px-2 gap-1 min-w-[66px] bg-green-50 border border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-colors"
             >
               {loading ? (
                 <Loader2 size={14} className="animate-spin" />
@@ -56,17 +55,17 @@ export default function ProductDetails({
               )}
             </button>
           ) : (
-            <div className="flex h-7 sm:h-8 min-w-[64px] sm:min-w-[72px] items-center font-bold justify-between rounded border border-primary bg-primary text-white text-xs sm:text-sm overflow-hidden">
+            <div className="flex h-7 sm:h-8 min-w-[64px] sm:min-w-[72px] items-center font-bold justify-between rounded-md border border-green-600 bg-green-50 text-green-600 text-xs sm:text-sm overflow-hidden">
               <button
                 onClick={() => decrementQuantity(product)}
-                className="w-1/3 h-full hover:bg-primary/90"
+                className="w-1/3 h-full"
               >
                 -
               </button>
               <span className="w-1/3 text-center">{quantity}</span>
               <button
                 onClick={() => incrementQuantity(product)}
-                className="w-1/3 h-full hover:bg-primary/90"
+                className="w-1/3 h-full"
               >
                 +
               </button>

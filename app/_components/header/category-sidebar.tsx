@@ -73,7 +73,7 @@ export default function CategorySidebar({
                 {categoryList.map((cat: any) => (
                   <Link
                     key={cat.id}
-                    href={`/category/${cat.slug}`}
+                    href={`/products-category/${cat.slug}`}
                     onClick={onClose}
                     className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors group"
                   >

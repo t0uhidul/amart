@@ -6,7 +6,7 @@ export default function Logo() {
   return (
     <Link
       href="/"
-      className="flex items-center group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-200 border-r border-gray-300 pr-4 sm:pr-6 lg:pr-8 h-16 sm:h-18 lg:h-20"
+      className="flex items-center group transition-all duration-200 border-r border-gray-300 pr-4 sm:pr-6 lg:pr-8 h-16 sm:h-18 lg:h-20"
       aria-label="Go to homepage"
     >
       <div className="flex items-baseline">

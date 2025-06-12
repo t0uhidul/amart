@@ -2,10 +2,9 @@
 
 import { useCart } from "@/contexts/cart-context";
 import { Product } from "@/lib/types";
-import { Eye, Loader2 } from "lucide-react";
+import { Eye } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import ProductDetails from "./productItem-details";
 
 type ProductItemProps = {
@@ -25,13 +24,9 @@ export default function ProductItem({
   const { cartItems, updateCart } = useCart();
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
-
-  // Add safety checks for product data
   const imgUrl = product.image
     ? baseUrl + product.image
     : "/placeholder.svg?height=300&width=300";
-
-  console.log("product======", product);
 
   const category = product.categories?.[0]?.name || "";
 
@@ -49,7 +44,6 @@ export default function ProductItem({
 
   const handleAddToCart = (product: Product) => {
     const clean = cleanProduct(product);
-
     const existing = cartItems[clean.id] || { ...clean, quantity: 0 };
 
     const updated = {
@@ -96,41 +90,13 @@ export default function ProductItem({
     updateCart(updated);
   };
 
-  // setTimeout(() => {
-  //   setLoading(true);
-  // }, 100);
-  // setLoading(false);
-
-  // try {
-  //   const newQty = 1;
-  //   setQuantity(newQty); // Update UI immediately
-
-  //   await addToCart(
-  //     {
-  //       user: authId,
-  //       product: product.id,
-  //       quantity: newQty,
-  //     },
-  //     authToken
-  //   );
-
-  //   toast.success("Added to cart");
-  //   const items = await GlobalApi.getToCart(authToken);
-  //   setCartCount(items?.length || 0);
-  // } catch (error: any) {
-  //   setQuantity(0); // rollback on error
-  //   const message = error?.response?.data?.detail || "Failed to add to cart";
-  //   console.error("Add to cart error:", message);
-  //   toast.error(message);
-  // } finally {
-  //   setLoading(false);
-  // }
-
   return (
     <div
-      className={` ${
-        isFeatured ? "flex flex-col border rounded-md overflow-hidden bg-white  text-sm" : "flex items-center gap-4 p-4"
-      } `}
+      className={`${
+        isFeatured
+          ? "flex flex-col border rounded-lg overflow-hidden bg-white text-sm transition-shadow hover:shadow-md"
+          : "flex items-center gap-4 p-4"
+      }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -140,16 +106,17 @@ export default function ProductItem({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onQuickView();
+                onQuickView?.();
               }}
-              className="bg-white p-1 rounded-full shadow hover:bg-gray-100 transition-colors"
+              className="bg-white p-1 rounded-full shadow hover:bg-gray-100 transition"
             >
               <Eye className="w-4 h-4 text-gray-700" />
             </button>
           </div>
-          <div className="h-36 sm:h-40 md:h-48 overflow-hidden">
+
+          <div className="h-32 sm:h-36 md:h-40 lg:h-44 overflow-hidden">
             <Image
-              src={imgUrl || "/placeholder.svg"}
+              src={imgUrl}
               alt={product.name}
               width={400}
               height={300}
