@@ -25,21 +25,26 @@ export default function CartButton() {
           }
         `}
       >
-        <div className="relative">
+        <div className="flex items-center justify-center">
           <ShoppingCart className="h-5 w-5" />
         </div>
 
-        <div className="hidden sm:flex flex-col items-start">
-          <span className="text-xs opacity-90">
+        <div className="hidden sm:flex flex-col justify-center min-w-[50px]">
+          {/* Top line: item count or "My Cart" */}
+          <span className="text-xs font-extrabold opacity-90 leading-tight text-left">
             {cartCount > 0
               ? `${cartCount} item${cartCount > 1 ? "s" : ""}`
-              : "Cart"}
+              : "My Cart"}
           </span>
-          {cartCount > 0 && (
-            <span className="text-sm font-semibold">
-              ৳{totalAmount.toLocaleString()}
-            </span>
-          )}
+
+          {/* Bottom line: total or empty with opacity-0 for consistent spacing */}
+          <span
+            className={`text-sm font-semibold leading-tight text-left ${
+              cartCount === 0 ? "opacity-0" : ""
+            }`}
+          >
+            ৳{totalAmount.toLocaleString()}
+          </span>
         </div>
       </button>
 

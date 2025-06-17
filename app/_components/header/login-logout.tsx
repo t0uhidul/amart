@@ -78,16 +78,15 @@ export default function LoginLogout() {
       onClick={showLoginModal}
       className="
         flex items-center gap-2 px-3 py-2 rounded-lg
-        text-sm font-medium text-primary 
+        text-xl font-extrabold text-gray-900 
         hover:bg-primary/5 hover:text-primary
         focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
         transition-all duration-200
         sm:px-4 sm:py-2.5
-        border border-primary/20 hover:border-primary/40
+       
       "
     >
-      <User className="h-4 w-4" />
-      <span className="hidden sm:inline">Log In</span>
+      <span className="hidden sm:inline">Login</span>
     </button>
   );
 }

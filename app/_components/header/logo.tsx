@@ -10,10 +10,10 @@ export default function Logo() {
       aria-label="Go to homepage"
     >
       <div className="flex items-baseline">
-        <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-yellow-500 leading-none group-hover:scale-105 transition-transform duration-200">
+        <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-yellow-500 leading-none group-hover:scale-105 transition-transform duration-200">
           a
         </span>
-        <span className="text-xl sm:text-2xl lg:text-3xl font-black text-primary tracking-tight leading-none group-hover:scale-105 transition-transform duration-200">
+        <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-primary tracking-tight leading-none group-hover:scale-105 transition-transform duration-200">
           mart
         </span>
       </div>

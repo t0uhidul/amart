@@ -3,8 +3,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth-context";
@@ -20,12 +18,12 @@ export default function CategoryDropdown() {
         <button
           className="
           flex items-center gap-2 px-4 py-2.5 rounded-lg
-          text-sm font-medium text-gray-700 
+          text-md font-extrabold text-gray-700 
           hover:bg-gray-100 hover:text-gray-900
           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
           transition-all duration-200
           whitespace-nowrap
-          bg-gray-50 border border-gray-200
+          bg-gray-50 border border-gray-100
         "
         >
           <List className="h-4 w-4" />
@@ -35,11 +33,6 @@ export default function CategoryDropdown() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-64 " align="start" sideOffset={8}>
-        {/* <DropdownMenuLabel className="text-sm font-semibold text-gray-900">
-          Shop by Category
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator /> */}
-
         <div className="max-h-120 overflow-y-auto border-t-3 border-primary">
           {categoryList?.length > 0 ? (
             categoryList.map((cat: any) => (

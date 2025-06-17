@@ -1,7 +1,9 @@
+// productItem-details.tsx
 "use client";
 
 import { Loader2 } from "lucide-react";
 import { Product } from "@/lib/types";
+import CartActionButton from "../cart-action-button";
 
 interface ProductDetailsProps {
   product: Product;
@@ -23,7 +25,7 @@ export default function ProductDetails({
   decrementQuantity,
 }: ProductDetailsProps) {
   return (
-    <div className="p-2 sm:p-3 flex flex-col flex-grow">
+    <div className="p-2 sm:p-3 flex flex-col flex-grow w-full">
       <div className="text-[10px] text-gray-500 mb-0.5">{category}</div>
       <h2 className="font-semibold text-xs sm:text-sm line-clamp-1">
         {product.name}
@@ -42,35 +44,15 @@ export default function ProductDetails({
             ৳{product.sellingPice}
           </p>
 
-          {quantity < 1 ? (
-            <button
-              onClick={() => handleAddToCart(product)}
-              disabled={loading}
-              className="rounded-md font-semibold flex justify-center items-center relative text-sm py-1.5 px-2 gap-1 min-w-[66px] bg-green-50 border border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-colors"
-            >
-              {loading ? (
-                <Loader2 size={14} className="animate-spin" />
-              ) : (
-                <span>ADD</span>
-              )}
-            </button>
-          ) : (
-            <div className="flex h-7 sm:h-8 min-w-[64px] sm:min-w-[72px] items-center font-bold justify-between rounded-md border border-green-600 bg-green-50 text-green-600 text-xs sm:text-sm overflow-hidden">
-              <button
-                onClick={() => decrementQuantity(product)}
-                className="w-1/3 h-full"
-              >
-                -
-              </button>
-              <span className="w-1/3 text-center">{quantity}</span>
-              <button
-                onClick={() => incrementQuantity(product)}
-                className="w-1/3 h-full"
-              >
-                +
-              </button>
-            </div>
-          )}
+          <CartActionButton
+            product={product}
+            quantity={quantity}
+            loading={loading}
+            size="sm"
+            handleAddToCart={handleAddToCart}
+            incrementQuantity={incrementQuantity}
+            decrementQuantity={decrementQuantity}
+          />
         </div>
       </div>
     </div>

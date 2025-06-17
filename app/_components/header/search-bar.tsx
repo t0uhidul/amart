@@ -4,18 +4,33 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useProducts } from "@/hook/use-products";
 import { Product } from "@/lib/types";
+import { searchItems } from "@/lib/variables";
 
 let debounceTimer: NodeJS.Timeout;
 
 export default function SearchBar() {
   const router = useRouter();
   const [input, setInput] = useState("");
+  const [placeholder, setPlaceholder] = useState(searchItems[0]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const { searchProducts } = useProducts();
+
+  // Rotate placeholder every 2s when input is empty
+  useEffect(() => {
+    if (input.trim()) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % searchItems.length);
+      setPlaceholder(searchItems[(currentIndex + 1) % searchItems.length]);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [input, currentIndex]);
 
   useEffect(() => {
     if (!input.trim()) {
@@ -66,16 +81,17 @@ export default function SearchBar() {
   return (
     <div className="relative max-w-2xl w-full mx-auto" ref={dropdownRef}>
       <form onSubmit={handleSubmit} className="w-full">
-        <div className="flex items-center border border-gray-300 rounded-lg bg-white px-4 py-2 shadow-sm">
-          <Search className="text-gray-400 mr-2" size={18} />
+        <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50 px-4 py-2">
+          <Search className="mr-2" size={20} />
           <input
             value={input}
             onChange={(e) => {
               setInput(e.target.value);
               setShowDropdown(true);
             }}
-            placeholder="Search products..."
-            className="flex-1 outline-none text-sm bg-transparent"
+            onFocus={() => setShowDropdown(true)}
+            placeholder={input.trim() ? "" : placeholder}
+            className="flex-1 outline-none text-sm bg-transparent p-1"
           />
         </div>
       </form>
@@ -87,6 +103,7 @@ export default function SearchBar() {
               <div className="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
             </div>
           )}
+
           {!loading &&
             suggestions.length > 0 &&
             suggestions.map((item) => (

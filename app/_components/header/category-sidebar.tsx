@@ -15,7 +15,6 @@ export default function CategorySidebar({
 }: CategorySidebarProps) {
   const { categoryList } = useAuth();
 
-  // Close sidebar on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -45,7 +44,7 @@ export default function CategorySidebar({
       {/* Sidebar */}
       <div className="absolute left-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-xl animate-in slide-in-from-left duration-300">
         <div className="flex h-full flex-col">
-          {/* Header - full width border */}
+          {/* Header */}
           <div className="border-b border-gray-300">
             <div className="flex items-center px-6 py-4">
               <div className="flex items-center gap-3 flex-1">
@@ -75,12 +74,19 @@ export default function CategorySidebar({
                     key={cat.id}
                     href={`/products-category/${cat.slug}`}
                     onClick={onClose}
-                    className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors group"
+                    tabIndex={0}
+                    className="
+                      group flex items-center gap-2 px-4 py-2.5 rounded-lg
+                      text-sm font-medium text-gray-700
+                      bg-gray-50 border border-gray-200
+                      hover:bg-gray-100 hover:text-primary
+                      focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+                      transition-all duration-200
+                      whitespace-nowrap
+                    "
                   >
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                      {cat.name}
-                    </span>
-                    <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600" />
+                    <span className="flex-1 truncate">{cat.name}</span>
+                    <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-primary transition" />
                   </Link>
                 ))}
               </div>
@@ -91,7 +97,7 @@ export default function CategorySidebar({
             )}
           </div>
 
-          {/* Footer - full width border */}
+          {/* Footer */}
           <div className="border-t border-gray-300">
             <div className="px-6 py-4">
               <p className="text-xs text-gray-500 text-center">

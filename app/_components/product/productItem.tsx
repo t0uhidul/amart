@@ -115,14 +115,21 @@ export default function ProductItem({
           </div>
 
           <div className="h-32 sm:h-36 md:h-40 lg:h-44 overflow-hidden">
-            <Image
-              src={imgUrl}
-              alt={product.name}
-              width={400}
-              height={300}
-              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-              unoptimized
-            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onQuickView?.();
+              }}
+            >
+              <Image
+                src={imgUrl}
+                alt={product.name}
+                width={400}
+                height={300}
+                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                unoptimized
+              />
+            </button>
           </div>
         </div>
       ) : (
