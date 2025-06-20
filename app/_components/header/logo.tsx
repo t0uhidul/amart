@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 
-export default function Logo() {
+export default function Logo({ isHeader }: { isHeader?: boolean }) {
   return (
     <Link
       href="/"
-      className="flex items-center group transition-all duration-200 border-r border-gray-300 pr-4 sm:pr-6 lg:pr-8 h-16 sm:h-18 lg:h-20"
+      className={`flex items-center group transition-all duration-200  pr-4 sm:pr-6 lg:pr-8 h-16 sm:h-18 lg:h-20 ${
+        isHeader ? "border-r border-gray-300" : ""
+      }`}
       aria-label="Go to homepage"
     >
       <div className="flex items-baseline">

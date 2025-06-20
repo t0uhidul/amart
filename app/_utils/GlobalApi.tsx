@@ -15,7 +15,7 @@ const axiosClient = axios.create({
 
 const getCategoryList = () =>
   axiosClient.get("/store/categories/").then((res) => {
-    // console.log("resp", res);
+    console.log("resp--------------", res);
     return res.data;
   });
 const getSliders = () =>

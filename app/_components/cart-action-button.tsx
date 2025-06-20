@@ -1,7 +1,6 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { Product } from "@/lib/types";
 
 interface CartActionButtonProps {
   product: Product;

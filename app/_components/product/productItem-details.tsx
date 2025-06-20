@@ -1,23 +1,10 @@
 // productItem-details.tsx
 "use client";
-
-import { Loader2 } from "lucide-react";
-import { Product } from "@/lib/types";
 import CartActionButton from "../cart-action-button";
-
-interface ProductDetailsProps {
-  product: Product;
-  category: string;
-  quantity: number;
-  loading: boolean;
-  handleAddToCart: (product: Product) => void;
-  incrementQuantity: (product: Product) => void;
-  decrementQuantity: (product: Product) => void;
-}
 
 export default function ProductDetails({
   product,
-  category,
+
   quantity,
   loading,
   handleAddToCart,
@@ -26,7 +13,6 @@ export default function ProductDetails({
 }: ProductDetailsProps) {
   return (
     <div className="p-2 sm:p-3 flex flex-col flex-grow w-full">
-      <div className="text-[10px] text-gray-500 mb-0.5">{category}</div>
       <h2 className="font-semibold text-xs sm:text-sm line-clamp-1">
         {product.name}
       </h2>

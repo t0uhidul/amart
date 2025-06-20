@@ -1,17 +1,10 @@
 "use client";
 
 import { useCart } from "@/contexts/cart-context";
-import { Product } from "@/lib/types";
-import { Eye } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ProductDetails from "./productItem-details";
-
-type ProductItemProps = {
-  product: Product;
-  onQuickView?: () => void;
-  isFeatured?: boolean;
-};
+import { Eye } from "lucide-react";
 
 export default function ProductItem({
   product,
@@ -28,13 +21,12 @@ export default function ProductItem({
     ? baseUrl + product.image
     : "/placeholder.svg?height=300&width=300";
 
-  const category = product.categories?.[0]?.name || "";
-
   const cleanProduct = (product: Product) => ({
-    id: product.id,
-    name: product.name,
-    sellingPice: product.sellingPice,
+    id: product?.id,
+    name: product?.name,
+    sellingPice: product?.sellingPice,
     quantity: 1,
+    image: product?.image,
   });
 
   useEffect(() => {
@@ -61,6 +53,8 @@ export default function ProductItem({
   const incrementQuantity = (product: Product) => {
     const clean = cleanProduct(product);
     const existing = cartItems[clean.id] || { ...clean, quantity: 0 };
+
+    console.log("product:", product);
 
     const updated = {
       ...cartItems,
@@ -147,7 +141,6 @@ export default function ProductItem({
 
       <ProductDetails
         product={product}
-        category={category}
         quantity={quantity}
         loading={loading}
         handleAddToCart={handleAddToCart}

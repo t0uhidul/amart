@@ -3,7 +3,6 @@
 import { useState } from "react";
 import ProductItem from "./productItem";
 import ProductModal from "./product-modal";
-import { Product } from "@/lib/types";
 
 export default function Products({ productList }: { productList: Product[] }) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);

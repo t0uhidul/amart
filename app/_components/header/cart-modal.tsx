@@ -20,7 +20,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
 
   const deliveryCharge = 25;
   const handlingCharge = 2;
-  const grandTotal = totalAmount + deliveryCharge + handlingCharge;
+  const grandTotal = Math.floor(totalAmount + deliveryCharge + handlingCharge);
 
   if (!isOpen) return null;
   const handleProceed = () => {
@@ -81,13 +81,9 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                   <p className="text-gray-400 text-lg">Your cart is empty</p>
                 </div>
               ) : (
-                Object.values(cartItems).map((item: any) => {
+                Object.values(cartItems).map((item: AnyType, indx) => {
                   return (
-                    <ProductItem
-                      key={item.id || index}
-                      product={item}
-                      isFeatured={false}
-                    />
+                    <ProductItem key={indx} product={item} isFeatured={false} />
                   );
                 })
               )}

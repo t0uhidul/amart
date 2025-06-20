@@ -24,7 +24,7 @@ export default function Header() {
             <div className="flex items-center justify-between h-16 sm:h-18 lg:h-20">
               {/* Logo */}
               <div className="flex-shrink-0">
-                <Logo />
+                <Logo isHeader={true} />
               </div>
 
               {/* Desktop: Category + Search (hidden on mobile) */}

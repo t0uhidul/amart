@@ -12,6 +12,8 @@ import Link from "next/link";
 export default function CategoryDropdown() {
   const { categoryList } = useAuth();
 
+  console.log("categoryList:", categoryList);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

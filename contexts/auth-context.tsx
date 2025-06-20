@@ -46,13 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [country_code, setCountryCode] = useState("+880");
   const [categoryList, setCategoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  // const [numberOfCartItems, setNumberOfCartItems] = useState(0);
 
-  // const handleCartItemCountChange = (count: number) => {
-  //   setNumberOfCartItems(count);
-  // };
-
-  // Check if user is already authenticated on mount
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     const id = localStorage.getItem("authId");
@@ -106,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       const data = await response.json();
-
+      console.log("Login response:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to send OTP");
       }

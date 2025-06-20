@@ -49,8 +49,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     for (const id in storedItems) {
       const item = storedItems[id];
       count += item.quantity;
-      total += item.quantity * item.sellingPice; // Adjust if field is different
+      total += item.quantity * item.sellingPice;
     }
+    count = Math.floor(count);
+    total = Math.floor(total);
 
     setCartItems(storedItems);
     setCartCount(count);
@@ -62,6 +64,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     name: item.name,
     sellingPice: item.sellingPice,
     quantity: item.quantity,
+    image: item.image || null,
   });
 
   const updateCart = (updatedItems: { [key: string]: AnyType }) => {
@@ -71,6 +74,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const safeItems: { [key: string]: AnyType } = {};
 
     for (const id in updatedItems) {
+      console.log(id, "updatedItems[id]");
       const item = updatedItems[id];
       const clean = safeItem(item);
       safeItems[id] = clean;

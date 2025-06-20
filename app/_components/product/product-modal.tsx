@@ -2,20 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import {
-  X,
-  Minus,
-  Plus,
-  Star,
-  Truck,
-  ShieldCheck,
-  RefreshCw,
-  Loader2,
-} from "lucide-react";
+import { X, Star, Truck, ShieldCheck, RefreshCw } from "lucide-react";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
-import type { Product } from "@/lib/types";
 import { useCart } from "@/contexts/cart-context";
 import CartActionButton from "../cart-action-button";
 import { DialogTitle } from "@radix-ui/react-dialog";

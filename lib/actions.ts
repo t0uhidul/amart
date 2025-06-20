@@ -3,7 +3,6 @@
 import { getEndpoint } from "@/lib/endpoint";
 import { handleError, handleSuccess } from "@/lib/request";
 import axios from "axios";
-import { AnyType } from "./types";
 
 // 1. Get all cart items
 export async function getCartItems(jwt: string) {
@@ -66,3 +65,5 @@ export async function addToCart(data: AnyType, jwt: string) {
     return handleError(error);
   }
 }
+
+export async function 

@@ -31,7 +31,6 @@ export default function LoginLogout() {
             </div>
 
             <div className="hidden sm:flex flex-col items-start">
-              <span className="text-xs text-gray-500">Welcome</span>
               <span className="text-sm font-medium text-gray-900 max-w-[100px] truncate">
                 {phoneNumber}
               </span>

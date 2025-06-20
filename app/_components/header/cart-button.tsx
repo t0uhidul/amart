@@ -29,9 +29,9 @@ export default function CartButton() {
           <ShoppingCart className="h-5 w-5" />
         </div>
 
-        <div className="hidden sm:flex flex-col justify-center min-w-[50px]">
+        <div className="sm:flex flex-col justify-center min-w-[50px]">
           {/* Top line: item count or "My Cart" */}
-          <span className="text-xs font-extrabold opacity-90 leading-tight text-left">
+          <span className="flex text-xs font-extrabold opacity-90 leading-tight text-left">
             {cartCount > 0
               ? `${cartCount} item${cartCount > 1 ? "s" : ""}`
               : "My Cart"}
