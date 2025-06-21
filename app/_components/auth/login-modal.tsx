@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/auth-context";
 import Logo from "../header/logo";
-
-const countryCodes = [{ code: "+880", country: "BD", name: "Bangladesh" }];
+import { countryCodes } from "@/lib/variables";
 
 type LoginState = "initial" | "success";
 

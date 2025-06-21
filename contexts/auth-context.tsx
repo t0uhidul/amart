@@ -30,7 +30,6 @@ interface AuthContextType {
   hideModals: () => void;
   login: (phone: string) => Promise<void>;
   verifyOtp: (otp: string) => Promise<void>;
-  resendOtp: () => Promise<void>;
   logout: () => void;
   isLoading: boolean;
   categoryList: Category[];
@@ -46,6 +45,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [country_code, setCountryCode] = useState("+880");
   const [categoryList, setCategoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -88,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (phone: string, country_code: CountryCode) => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth/phone-login/", {
+      const response = await fetch(`${baseUrl}/auth/phone-login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,14 +101,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       const data = await response.json();
-      console.log("Login response:", data);
+
       if (!response.ok) {
         throw new Error(data.message || "Failed to send OTP");
       }
 
       setPhoneNumber(phone);
       setCountryCode(country_code.code);
+      console.log(authState);
       setAuthState("verifying");
+      console.log(authState);
 
       toast("OTP Sent", {
         description: "Please check your phone for the verification code",
@@ -126,7 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const verifyOtp = async (otp: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://127.0.0.1:8000//auth/verify-otp/", {
+      const response = await fetch(`${baseUrl}/auth/verify-otp/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,6 +143,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       const data = await response.json();
+
+      console.log("------------------", data);
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to verify OTP");
@@ -171,36 +176,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const resendOtp = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/auth/send-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ phoneNumber }),
-      });
+  // const resendOtp = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await fetch("/api/auth/send-otp", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ phoneNumber }),
+  //     });
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to resend OTP");
-      }
+  //     if (!response.ok) {
+  //       throw new Error(data.message || "Failed to resend OTP");
+  //     }
 
-      toast("OTP Resent", {
-        description: "Please check your phone for the new verification code",
-      });
-    } catch (error) {
-      console.error("Error resending OTP:", error);
-      toast.error("Error", {
-        description:
-          error instanceof Error ? error.message : "Failed to resend OTP",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     toast("OTP Resent", {
+  //       description: "Please check your phone for the new verification code",
+  //     });
+  //   } catch (error) {
+  //     console.error("Error resending OTP:", error);
+  //     toast.error("Error", {
+  //       description:
+  //         error instanceof Error ? error.message : "Failed to resend OTP",
+  //     });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const logout = () => {
     localStorage.removeItem("authToken");
@@ -224,7 +229,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         hideModals,
         login,
         verifyOtp,
-        resendOtp,
         logout,
         isLoading,
         categoryList,

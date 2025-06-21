@@ -2,8 +2,6 @@ import BackButton from "@/app/_components/back-button";
 import Products from "@/app/_components/product/products";
 // import TopCategories from "@/app/_components/categorry/top-category";
 import GlobalApi from "@/app/_utils/GlobalApi";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 
 export default async function ProductsByCategory({
   params,
@@ -15,7 +13,6 @@ export default async function ProductsByCategory({
 
   // Fetch data using the category name
   const productList = await GlobalApi.getProductByCategory(categoryName);
-  const categoryList = await GlobalApi.getCategoryList();
 
   if (!productList || productList.length === 0) {
     return (

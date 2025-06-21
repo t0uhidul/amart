@@ -1,9 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
-import type { Product } from "@/lib/types";
-import { ArrowLeft, Search } from "lucide-react";
-import Link from "next/link";
+import { Search } from "lucide-react";
 import { useProducts } from "@/hook/use-products";
 import Products from "../_components/product/products";
 import BackButton from "../_components/back-button";
@@ -11,8 +9,8 @@ import BackButton from "../_components/back-button";
 function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
-  const { products, loading, error, searchProducts } = useProducts();
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const { loading, error, searchProducts } = useProducts();
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {

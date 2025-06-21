@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +32,7 @@ import {
   CheckCircle,
   Save,
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface AddressModalProps {
   isOpen: boolean;
@@ -87,6 +90,31 @@ const addressLabels = [
   },
 ];
 
+// Area mapping for Bangladesh cities
+const areaMapping: { [key: string]: string[] } = {
+  dhaka: [
+    "Badda, Dhaka",
+    "Gulshan, Dhaka",
+    "Dhanmondi, Dhaka",
+    "Uttara, Dhaka",
+    "Mirpur, Dhaka",
+    "Mohakhali, Dhaka",
+    "Banani, Dhaka",
+    "Wari, Dhaka",
+    "Ramna, Dhaka",
+    "Tejgaon, Dhaka",
+    "Pallabi, Dhaka",
+    "Savar, Dhaka",
+  ],
+  chittagong: [
+    "Agrabad, Chittagong",
+    "Panchlaish, Chittagong",
+    "Khulshi, Chittagong",
+    "Halishahar, Chittagong",
+  ],
+  sylhet: ["Zindabazar, Sylhet", "Ambarkhana, Sylhet", "Subhanighat, Sylhet"],
+};
+
 export default function AddressModal({
   isOpen,
   onClose,
@@ -114,9 +142,24 @@ export default function AddressModal({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [availableAreas, setAvailableAreas] = useState<string[]>([]);
 
   const handleInputChange = (field: keyof AddressData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+
+    // Update available areas when city changes
+    if (field === "city") {
+      const cityKey = value.toLowerCase();
+      setAvailableAreas(areaMapping[cityKey] || areaMapping.dhaka);
+      // Reset area if city changes
+      setFormData((current) => {
+        if (current.city !== value) {
+          return { ...current, area: "" };
+        }
+        return current;
+      });
+    }
+
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -140,53 +183,128 @@ export default function AddressModal({
         const { latitude, longitude } = position.coords;
 
         try {
-          // Reverse geocoding to get address from coordinates
+          // Using BigDataCloud's free reverse geocoding API (no API key required)
           const response = await fetch(
-            `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=YOUR_API_KEY`
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
           );
 
           if (response.ok) {
             const data = await response.json();
-            const result = data.results[0];
+            console.log("Location data:", data); // For debugging
 
-            if (result) {
-              const components = result.components;
-              const formattedAddress = result.formatted;
+            // Extract comprehensive address information
+            const city = data.city || data.locality || "Dhaka";
+            const locality = data.locality || "";
+            const principalSubdivision = data.principalSubdivision || "";
+            const countryName = data.countryName || "";
 
-              setLocation({
-                loading: false,
-                error: null,
-                coordinates: { lat: latitude, lng: longitude },
-                address: formattedAddress,
-              });
+            // Try to extract more detailed address components
+            const administrative = data.localityInfo?.administrative || [];
+            const informative = data.localityInfo?.informative || [];
 
-              // Auto-fill form with location data
-              setFormData((prev) => ({
-                ...prev,
-                city: components.city || components.state_district || "Dhaka",
-                area: components.suburb || components.neighbourhood || "",
-                roadStreet: components.road || "",
-                latitude,
-                longitude,
-              }));
+            // Build detailed address components
+            let detectedArea = "";
+            let detectedRoad = "";
+            let detectedBlock = "";
+
+            // Extract area information
+            if (administrative.length > 0) {
+              // Usually administrative[2] or [3] contains area/thana information
+              detectedArea =
+                administrative[2]?.name || administrative[3]?.name || locality;
             }
-          } else {
-            // Fallback without reverse geocoding
+
+            // Extract road/street information from informative data
+            if (informative.length > 0) {
+              const roadInfo = informative.find(
+                (info) =>
+                  info.description?.toLowerCase().includes("road") ||
+                  info.description?.toLowerCase().includes("street")
+              );
+              detectedRoad = roadInfo?.name || "";
+            }
+
+            // Extract block/sector information
+            const blockInfo = informative.find(
+              (info) =>
+                info.description?.toLowerCase().includes("block") ||
+                info.description?.toLowerCase().includes("sector")
+            );
+            detectedBlock = blockInfo?.name || "";
+
+            const formattedAddress = [
+              locality,
+              city,
+              principalSubdivision,
+              countryName,
+            ]
+              .filter(Boolean)
+              .join(", ");
+
             setLocation({
               loading: false,
               error: null,
               coordinates: { lat: latitude, lng: longitude },
-              address: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
+              address:
+                formattedAddress ||
+                `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
             });
 
+            // Set available areas based on detected city
+            const cityKey = city.toLowerCase();
+            const areas = areaMapping[cityKey] || areaMapping.dhaka;
+            setAvailableAreas(areas);
+
+            // Find best matching area
+            let bestArea = "";
+            if (detectedArea) {
+              // Try to find exact match first
+              bestArea =
+                areas.find((area) =>
+                  area.toLowerCase().includes(detectedArea.toLowerCase())
+                ) || "";
+
+              // If no exact match, try partial match
+              if (!bestArea) {
+                bestArea =
+                  areas.find((area) =>
+                    detectedArea
+                      .toLowerCase()
+                      .includes(area.split(",")[0].toLowerCase())
+                  ) || "";
+              }
+            }
+
+            // Auto-fill comprehensive form data
             setFormData((prev) => ({
               ...prev,
+              city: city,
+              area: bestArea || (areas.length > 0 ? areas[0] : ""),
+              roadStreet:
+                detectedRoad ||
+                data.localityInfo?.administrative?.[4]?.name ||
+                "",
+              blockSector: detectedBlock || "",
+              // Keep existing user-entered data for these fields
+              houseNumber: prev.houseNumber || "",
+              floorNumber: prev.floorNumber || "",
+              apartmentNumber: prev.apartmentNumber || "",
+              name: prev.name || "",
+              phoneNumber: prev.phoneNumber || "",
+              deliveryNote:
+                prev.deliveryNote ||
+                `Auto-detected location: ${formattedAddress}`,
               latitude,
               longitude,
             }));
+
+            toast.success("Location detected and form auto-filled!");
+          } else {
+            throw new Error("Failed to get address details");
           }
         } catch (error) {
-          // Fallback for API errors
+          console.error("Geocoding error:", error);
+          // Fallback without reverse geocoding
           setLocation({
             loading: false,
             error: null,
@@ -194,11 +312,21 @@ export default function AddressModal({
             address: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
           });
 
+          // Set default city and areas
+          setAvailableAreas(areaMapping.dhaka);
+
           setFormData((prev) => ({
             ...prev,
+            city: prev.city || "Dhaka",
+            area: prev.area || areaMapping.dhaka[0],
             latitude,
             longitude,
+            deliveryNote:
+              prev.deliveryNote ||
+              `Coordinates: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
           }));
+
+          toast.success("Location coordinates detected!");
         }
       },
       (error) => {
@@ -220,10 +348,12 @@ export default function AddressModal({
           loading: false,
           error: errorMessage,
         }));
+
+        toast.error(errorMessage);
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
+        timeout: 15000, // Increased timeout
         maximumAge: 300000, // 5 minutes
       }
     );
@@ -270,8 +400,17 @@ export default function AddressModal({
         coordinates: null,
         address: "",
       });
+      setAvailableAreas([]);
+      toast.success("Address saved successfully!");
     }
   };
+
+  // Initialize areas when modal opens
+  React.useEffect(() => {
+    if (isOpen && availableAreas.length === 0) {
+      setAvailableAreas(areaMapping.dhaka); // Default to Dhaka areas
+    }
+  }, [isOpen]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -283,14 +422,9 @@ export default function AddressModal({
               <DialogTitle className="text-lg font-semibold text-gray-900">
                 Add New Address
               </DialogTitle>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onClose}
-                className="h-8 w-8"
-              >
+              <button onClick={onClose} className="h-8 w-8">
                 <X className="w-4 h-4" />
-              </Button>
+              </button>
             </div>
           </DialogHeader>
 
@@ -298,7 +432,7 @@ export default function AddressModal({
           <div className="p-4 border-b bg-gray-50">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-medium text-gray-900">
-                Current Location
+                Auto-Fill from Location
               </h3>
               <Button
                 onClick={getCurrentLocation}
@@ -311,7 +445,7 @@ export default function AddressModal({
                 ) : (
                   <Navigation className="w-3 h-3 mr-1" />
                 )}
-                {location.loading ? "Getting..." : "Use Current Location"}
+                {location.loading ? "Detecting..." : "Use Current Location"}
               </Button>
             </div>
 
@@ -321,7 +455,7 @@ export default function AddressModal({
                   <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
                     <p className="text-xs font-medium text-green-800">
-                      Location detected
+                      Location detected & form auto-filled
                     </p>
                     <p className="text-xs text-green-700 mt-1">
                       {location.address}
@@ -378,15 +512,11 @@ export default function AddressModal({
                     <SelectValue placeholder="Select area" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Badda, Dhaka">Badda, Dhaka</SelectItem>
-                    <SelectItem value="Gulshan, Dhaka">
-                      Gulshan, Dhaka
-                    </SelectItem>
-                    <SelectItem value="Dhanmondi, Dhaka">
-                      Dhanmondi, Dhaka
-                    </SelectItem>
-                    <SelectItem value="Uttara, Dhaka">Uttara, Dhaka</SelectItem>
-                    <SelectItem value="Mirpur, Dhaka">Mirpur, Dhaka</SelectItem>
+                    {availableAreas.map((area) => (
+                      <SelectItem key={area} value={area}>
+                        {area}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 {errors.area && (
@@ -584,7 +714,7 @@ export default function AddressModal({
               className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
             >
               <Save className="w-4 h-4 mr-2" />
-              Submit Address
+              Save Address
             </Button>
           </div>
         </div>

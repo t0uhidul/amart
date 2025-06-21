@@ -55,9 +55,9 @@ export default function Footer() {
             </div>
 
             <p className="mt-6 max-w-md text-center leading-relaxed text-gray-500 sm:max-w-xs sm:text-left">
-              Welcome to Amart! We're dedicated to bringing you a smart, simple,
-              and satisfying shopping experience—where quality products meet
-              convenience, and your satisfaction is our top priority.
+              Welcome to Amart! We&apos;re dedicated to bringing you a smart,
+              simple, and satisfying shopping experience—where quality products
+              meet convenience, and your satisfaction is our top priority.
             </p>
 
             <ul className="mt-8 flex justify-center gap-6 sm:justify-start md:gap-8">

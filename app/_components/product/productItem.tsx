@@ -12,8 +12,6 @@ export default function ProductItem({
   isFeatured = false,
 }: ProductItemProps) {
   const [quantity, setQuantity] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const { cartItems, updateCart } = useCart();
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
@@ -54,8 +52,6 @@ export default function ProductItem({
     const clean = cleanProduct(product);
     const existing = cartItems[clean.id] || { ...clean, quantity: 0 };
 
-    console.log("product:", product);
-
     const updated = {
       ...cartItems,
       [clean.id]: {
@@ -91,8 +87,6 @@ export default function ProductItem({
           ? "flex flex-col border rounded-lg overflow-hidden bg-white text-sm transition-shadow hover:shadow-md"
           : "flex items-center gap-4 p-4"
       }`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       {isFeatured ? (
         <div className="relative">
@@ -142,7 +136,6 @@ export default function ProductItem({
       <ProductDetails
         product={product}
         quantity={quantity}
-        loading={loading}
         handleAddToCart={handleAddToCart}
         incrementQuantity={incrementQuantity}
         decrementQuantity={decrementQuantity}

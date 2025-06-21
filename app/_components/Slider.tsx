@@ -32,7 +32,7 @@ export default function HeroSlider() {
     return () => {
       if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
     };
-  }, [currentIndex, isAutoPlaying, sliderList.length]);
+  }, [currentIndex, isAutoPlaying]);
 
   const handleDotClick = (index: number) => {
     if (index === currentIndex) return;

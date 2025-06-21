@@ -15,7 +15,6 @@ const axiosClient = axios.create({
 
 const getCategoryList = () =>
   axiosClient.get("/store/categories/").then((res) => {
-    console.log("resp--------------", res);
     return res.data;
   });
 const getSliders = () =>
@@ -33,7 +32,7 @@ const getProducts = () =>
 const getProductByCategory = (slug: string) =>
   axiosClient.get(`store/products/category/${slug}/`).then((res) => res.data);
 
-const addToCart = (data: any, jwt: string) =>
+const addToCart = (data: unknown, jwt: string) =>
   axiosClient.post("/store/user-cart/", data, {
     headers: {
       Authorization: `Bearer ${jwt}`,
@@ -66,7 +65,7 @@ const removeAllFormCart = (jwt: string) =>
     },
   });
 
-export default {
+const GlobalApi = {
   // getCategory,
   getSliders,
   getProducts,
@@ -77,3 +76,5 @@ export default {
   removeOneFormCart,
   removeAllFormCart,
 };
+
+export default GlobalApi;

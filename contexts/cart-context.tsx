@@ -74,7 +74,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const safeItems: { [key: string]: AnyType } = {};
 
     for (const id in updatedItems) {
-      console.log(id, "updatedItems[id]");
       const item = updatedItems[id];
       const clean = safeItem(item);
       safeItems[id] = clean;

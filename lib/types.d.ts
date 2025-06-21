@@ -38,3 +38,10 @@ type ProductDetailsProps = {
   incrementQuantity: (product: Product) => void;
   decrementQuantity: (product: Product) => void;
 };
+
+// Define a Category type inline for mapping
+type Category = {
+  id?: string | number;
+  slug?: string;
+  name?: string;
+};

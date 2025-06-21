@@ -24,7 +24,8 @@ export async function getCartItems(jwt: string) {
 // 2. Remove one item from cart
 export async function removeOneFromCart(jwt: string, itemId: number) {
   try {
-    const endpoint = await getEndpoint(`removeCartItem`, itemId);
+    // Convert itemId to string if required by getEndpoint
+    const endpoint = await getEndpoint(`removeCartItem`, String(itemId));
     const response = await axios.delete(endpoint, {
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -65,5 +66,3 @@ export async function addToCart(data: AnyType, jwt: string) {
     return handleError(error);
   }
 }
-
-export async function 

@@ -9,16 +9,11 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { countryCodes } from "@/lib/variables";
 
 export function OtpVerificationModal() {
-  const {
-    authState,
-    phoneNumber,
-    verifyOtp,
-    resendOtp,
-    hideModals,
-    isLoading,
-  } = useAuth();
+  const { authState, phoneNumber, verifyOtp, hideModals, isLoading, login } =
+    useAuth();
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
@@ -58,7 +53,7 @@ export function OtpVerificationModal() {
 
   const handleResendOTP = async () => {
     if (canResend) {
-      await resendOtp();
+      await login(phoneNumber, countryCodes[0]);
       setCountdown(60);
       setCanResend(false);
       setOtp("");

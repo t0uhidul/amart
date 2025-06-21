@@ -3,7 +3,6 @@ import { Search, ChevronRight } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useProducts } from "@/hook/use-products";
-import { Product } from "@/lib/types";
 import { searchItems } from "@/lib/variables";
 
 let debounceTimer: NodeJS.Timeout;
@@ -46,7 +45,7 @@ export default function SearchBar() {
       setSuggestions(result.slice(0, 5));
       setLoading(false);
     }, 500);
-  }, [input]);
+  }, [input, searchProducts]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

@@ -69,7 +69,7 @@ export default function CategorySidebar({
           <div className="flex-1 overflow-y-auto">
             {categoryList?.length > 0 ? (
               <div className="py-2">
-                {categoryList.map((cat: any) => (
+                {categoryList.map((cat: Category) => (
                   <Link
                     key={cat.id}
                     href={`/products-category/${cat.slug}`}

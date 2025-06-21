@@ -12,7 +12,7 @@ import Link from "next/link";
 export default function CategoryDropdown() {
   const { categoryList } = useAuth();
 
-  console.log("categoryList:", categoryList);
+
 
   return (
     <DropdownMenu>
@@ -37,9 +37,9 @@ export default function CategoryDropdown() {
       <DropdownMenuContent className="w-64 " align="start" sideOffset={8}>
         <div className="max-h-120 overflow-y-auto border-t-3 border-primary">
           {categoryList?.length > 0 ? (
-            categoryList.map((cat: any) => (
+            categoryList.map((cat: Category) => (
               <DropdownMenuItem
-                key={cat.id}
+                key={cat?.id ?? cat?.slug ?? cat?.name}
                 className="font-medium cursor-pointer hover:bg-gray-100 focus:bg-gray-100 py-2.5"
                 asChild
               >

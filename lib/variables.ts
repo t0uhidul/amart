@@ -23,3 +23,7 @@ export const searchItems = [
   'Search "egg"',
   'Search "chips"',
 ];
+
+export const countryCodes = [
+  { code: "+880", country: "BD", name: "Bangladesh" },
+];
